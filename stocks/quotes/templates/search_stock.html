@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{%  block content %}
+
+
+{% if ticker %}
+    {{ ticker }}
+{% endif %}
+
+{% if stock_data %}
+    {% if stock_data.Error %}
+        There was a problem with your ticker,
+        please try again..
+
+    {% else %}
+        <h1>{{  stock_data.companyName }} </h1><br/>
+        Price : {{  stock_data.latestPrice }} <br/>
+        Previous Close: {{  stock_data.previousClose }} <br/>
+        Market Cap: {{  stock_data.marketCap }} <br/>
+        YTD Change: {{  stock_data.ytdChange }} <br/>
+        52Wk High: {{  stock_data.week52High }} <br/>
+        52Wk Low: {{  stock_data.week52Low }} <br/>
+
+    {% endif %}
+{% endif %}
+
+
+{% endblock %}
