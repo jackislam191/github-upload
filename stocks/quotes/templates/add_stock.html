@@ -25,6 +25,7 @@
   <thead class="thead-dark">
     <tr>
       <th scope="col">Stock Name</th>
+      <th scope="col">Stock Current Price (USD)</th>
       <th scope="col">Delete</th>
       
       
@@ -37,8 +38,10 @@
         
         
           <tr>
-              <td>{{ item }}</td>
-              <td><a href="{% url 'delete' item.id %}">Delete Stock</a></td>
+              <td>{{ item.symbol }}</td>
+              <td>{{ item.latestPrice }}</td>
+              
+              <td><a href="{% url 'delete' item.symbol %}">Delete Stock</a></td>
               
                  
           </tr>

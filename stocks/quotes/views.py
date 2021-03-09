@@ -6,7 +6,7 @@ from .forms import StockForm
 import requests 
 import json
 # Create your views here.
-sandbox_IEX_API_token = 'Tpk_ddec8e192cce4af39916c2d21043672b'
+
 def iex_stock_data(ticker_symbol):
     API_token = settings.IEX_API_TOKEN    
     url = "https://cloud.iexapis.com/stable/stock/" + ticker_symbol + "/quote?token=" +API_token
@@ -44,12 +44,16 @@ def search_batch_stockdata(stock_tickers):
             data = json.loads(data.content)
             for item in data:
                 datalist.append(data[item]['quote'])
+                ##THE JSON FILE FORMAT
+                ####STOCK_TICKER
+                ####### quote
+                ########## STOCK_TICKER_DATA
         else:
             data = {'Error': 'There are errors, please try again.'}
     except Exception as e:
         data = {'Error': 'Connection Error! Please try again!'}
     return data_list
-    
+
 def about(request):
     return render(request, 'about.html', {})
 
@@ -119,7 +123,7 @@ def add_stock(request):
         else:
             messages.info(request, 'You dont have any stock in your portfolio!')
         
-        return render(request, 'add_stock.html', {'stockdata': stockdata})
+        return render(request, 'add_stock.html', {'stockdata': stockdata1})
         #return render(request, 'add_stock.html', {'stockdata': stockdata})   
             
                 
@@ -130,13 +134,12 @@ def add_stock(request):
 
 def portfolio(request):
     ticker = Stock.objects.all()
-    print(settings.IEX_API_TOKEN)
-    print(settings.SANDBOX_IEX_API_TOKEN)
+    
     return render(request, 'portfolio.html',{'ticker':ticker})
 
-def delete(request, stock_id):
-
-    item = Stock.objects.get(pk=stock_id) # primary key = stock id
+def delete(request, stock_symbol): #### replace stock_ticker as stock_id.
+    item = Stock.objects.get(ticker=stock_symbol)
+    #item = Stock.objects.get(pk=stock_id) # primary key = stock id
     item.delete()
     messages.success(request, ("Stock has been deleted !"))
 
