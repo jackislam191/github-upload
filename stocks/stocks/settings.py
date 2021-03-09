@@ -55,7 +55,7 @@ ROOT_URLCONF = 'stocks.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR, 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -119,5 +119,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+
 IEX_API_TOKEN = 'pk_d7d6fe0afa014e21a15addd0105fd7c6'
-sandbox_IEX_API_token = 'Tpk_ddec8e192cce4af39916c2d21043672b'
+
+SANDBOX_IEX_API_TOKEN = 'Tpk_ddec8e192cce4af39916c2d21043672b'
+

@@ -6,10 +6,11 @@ from .forms import StockForm
 import requests 
 import json
 # Create your views here.
-
+sandbox_IEX_API_token = 'Tpk_ddec8e192cce4af39916c2d21043672b'
 def iex_stock_data(ticker_symbol):
-    API_token = settings.IEX_API_TOKEN
+    API_token = settings.IEX_API_TOKEN    
     url = "https://cloud.iexapis.com/stable/stock/" + ticker_symbol + "/quote?token=" +API_token
+
     try:
         stock_data = requests.get(url)
         if stock_data.status_code == 200:
@@ -32,7 +33,23 @@ def search_stock_data(request):
         stockData = iex_stock_data(ticker)
     return render(request, 'search_stock.html', {'stock_data': stockData})
 
+def search_batch_stockdata(stock_tickers):
+    datalist = []
+    try:
+        token = settings.sandbox_IEX_API_token
+        url = 'https://sandbox.iexapis.com/stable/stock/market/batch?symbols=' + stock_tickers + '&types=quote&token=' + token
+        data = requests.get(url)
 
+        if data.status_code == 200:
+            data = json.loads(data.content)
+            for item in data:
+                datalist.append(data[item]['quote'])
+        else:
+            data = {'Error': 'There are errors, please try again.'}
+    except Exception as e:
+        data = {'Error': 'Connection Error! Please try again!'}
+    return data_list
+    
 def about(request):
     return render(request, 'about.html', {})
 
@@ -50,9 +67,11 @@ def check_stock_inDB(ticker_symbol):
             return True
     except Exception:
         return False
+
 def stock_data_batch(stock_tickers):
     stock_list = []
-    token = settings.sandbox_IEX_API_token 
+    token = settings.SANDBOX_IEX_API_TOKEN
+
     url = 'https://sandbox.iexapis.com/stable/stock/market/batch?symbols=' + stock_tickers + '&types=quote&token=' + token
     try:
         data = requests.get(url)
@@ -67,6 +86,7 @@ def stock_data_batch(stock_tickers):
         data = {'Error': 'There is an error in connection!'}
     
     return stock_list
+
 def add_stock(request):
     if request.method == 'POST':
         ticker = request.POST['ticker']
@@ -78,9 +98,8 @@ def add_stock(request):
                 if check_stock_inDB(ticker):
                     messages.warning(request, "Stock is already existed in portfolio!")
                     return redirect('add_stock')
-                
+                    
                 if check_valid_stock(ticker):
-
                     form.save() #if it is valid, save it in database.
                     messages.success(request, ("Stock has been Added"))
                     return redirect('add_stock')
@@ -95,13 +114,13 @@ def add_stock(request):
             ticker_list = [stock.ticker for stock in stockdata]
             ticker_list = list(set(ticker_list))
             tickers = ','.join(ticker_list)
-            stockdata = stock_data_batch(tickers)
+            stockdata1 = stock_data_batch(tickers)
         
         else:
             messages.info(request, 'You dont have any stock in your portfolio!')
         
         return render(request, 'add_stock.html', {'stockdata': stockdata})
-            
+        #return render(request, 'add_stock.html', {'stockdata': stockdata})   
             
                 
                 
@@ -111,10 +130,13 @@ def add_stock(request):
 
 def portfolio(request):
     ticker = Stock.objects.all()
+    print(settings.IEX_API_TOKEN)
+    print(settings.SANDBOX_IEX_API_TOKEN)
     return render(request, 'portfolio.html',{'ticker':ticker})
 
 def delete(request, stock_id):
-    item = Stock.objects.get(pk= stock_id) # primary key = stock id
+
+    item = Stock.objects.get(pk=stock_id) # primary key = stock id
     item.delete()
     messages.success(request, ("Stock has been deleted !"))
 
