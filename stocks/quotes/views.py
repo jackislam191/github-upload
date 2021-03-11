@@ -7,6 +7,13 @@ import requests
 import json
 # Create your views here.
 
+
+def home(request):
+    return render(request, 'home.html')
+
+def about(request):
+    return render(request, 'about.html', {})
+    
 def iex_stock_data(ticker_symbol):
     API_token = settings.IEX_API_TOKEN    
     url = "https://cloud.iexapis.com/stable/stock/" + ticker_symbol + "/quote?token=" +API_token
@@ -21,9 +28,6 @@ def iex_stock_data(ticker_symbol):
        stock_data = {'Error':'Please try again later.'}
     return stock_data
 
-def home(request):
-    return render(request, 'home.html')
-
 def search_stock_data(request):
     API_token = settings.IEX_API_TOKEN
     
@@ -31,7 +35,7 @@ def search_stock_data(request):
         ticker = request.POST['ticker']
         # pk_d7d6fe0afa014e21a15addd0105fd7c6
         stockData = iex_stock_data(ticker)
-    return render(request, 'search_stock.html', {'stock_data': stockData})
+    return render(request, 'quotes/search_stock.html', {'stock_data': stockData})
 
 def search_batch_stockdata(stock_tickers):
     datalist = []
@@ -54,8 +58,7 @@ def search_batch_stockdata(stock_tickers):
         data = {'Error': 'Connection Error! Please try again!'}
     return data_list
 
-def about(request):
-    return render(request, 'about.html', {})
+
 
 def check_valid_stock(ticker_symbol):
     stockValid = iex_stock_data(ticker_symbol)
@@ -123,7 +126,7 @@ def add_stock(request):
         else:
             messages.info(request, 'You dont have any stock in your portfolio!')
         
-        return render(request, 'add_stock.html', {'stockdata': stockdata1})
+        return render(request, 'quotes/add_stock.html', {'stockdata': stockdata1})
         #return render(request, 'add_stock.html', {'stockdata': stockdata})   
             
                 
@@ -135,7 +138,7 @@ def add_stock(request):
 def portfolio(request):
     ticker = Stock.objects.all()
     
-    return render(request, 'portfolio.html',{'ticker':ticker})
+    return render(request, 'quotes/portfolio.html',{'ticker':ticker})
 
 def delete(request, stock_symbol): #### replace stock_ticker as stock_id.
     item = Stock.objects.get(ticker=stock_symbol)
