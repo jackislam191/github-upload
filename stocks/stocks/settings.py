@@ -78,8 +78,11 @@ WSGI_APPLICATION = 'stocks.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'capsstock',
+        'USER': 'postgres',
+        'PASSWORD': 'A7cd237f',
+        'HOST': 'localhost'
     }
 }
 
@@ -122,7 +125,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-
+AUTH_USER_MODEL = 'account.Account'
 IEX_API_TOKEN = 'pk_d7d6fe0afa014e21a15addd0105fd7c6'
 
 SANDBOX_IEX_API_TOKEN = 'Tpk_ddec8e192cce4af39916c2d21043672b'

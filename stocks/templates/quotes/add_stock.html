@@ -5,7 +5,7 @@
 <h1>Add Stock </h1>
 <br/>
 
-<form action="{% url 'quotes:add_stock' %}" class="d-flex" method="POST">
+<form action="{% url 'quotes:existing_stock' %}" class="d-flex" method="POST">
                 {% csrf_token %}
               <input class="form-control me-2"
                type="search" placeholder="Add to Portfolio" 
@@ -33,20 +33,23 @@
   </thead>
   
   <tbody>
+    {% if stockdata %}
+      {% for item in stockdata %} 
+          
+          
+            <tr>
+                <td>{{ item.symbol }}</td>
+                <td>{{ item.latestPrice }}</td>
+                
+                <td><a href="{% url 'quotes:delete' item.symbol %}">Delete Stock</a></td>
+                
+                  
+            </tr>
+          
+      {% endfor %}
+
     
-    {% for item in stockdata %} 
-        
-        
-          <tr>
-              <td>{{ item.symbol }}</td>
-              <td>{{ item.latestPrice }}</td>
-              
-              <td><a href="{% url 'quotes:delete' item.symbol %}">Delete Stock</a></td>
-              
-                 
-          </tr>
-        
-    {% endfor %}
+    {% endif %}
 
   </tbody>
 </table>

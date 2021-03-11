@@ -37,6 +37,7 @@ def search_stock_data(request):
         stockData = iex_stock_data(ticker)
     return render(request, 'quotes/search_stock.html', {'stock_data': stockData})
 
+
 def search_batch_stockdata(stock_tickers):
     datalist = []
     try:
@@ -94,7 +95,24 @@ def stock_data_batch(stock_tickers):
     
     return stock_list
 
-def add_stock(request):
+
+    #else:
+    #    context = {}
+    #    stockdata = Stock.objects.all()
+        
+    #    if stockdata:
+    #        ticker_list = [stock.ticker for stock in stockdata]
+    #        ticker_list = list(set(ticker_list))
+    #        tickers = ','.join(ticker_list)
+    #        stockdata1 = stock_data_batch(tickers)
+    #        
+    #        return render(request, 'quotes/add_stock.html', {'stockdata': stockdata1})
+    #    else:
+    #        messages.info(request, 'You dont have any stock in your portfolio!')
+    #        return render(request, 'quotes/add_stock.html')
+        
+        #return render(request, 'add_stock.html', {'stockdata': stockdata})   
+def existing_stock(request):
     if request.method == 'POST':
         ticker = request.POST['ticker']
         if ticker:
@@ -104,32 +122,27 @@ def add_stock(request):
   
                 if check_stock_inDB(ticker):
                     messages.warning(request, "Stock is already existed in portfolio!")
-                    return redirect('add_stock')
+                    return redirect('quotes:existing_stock')
                     
                 if check_valid_stock(ticker):
                     form.save() #if it is valid, save it in database.
                     messages.success(request, ("Stock has been Added"))
-                    return redirect('add_stock')
-
-        messages.warning(request,'Please enter a valid ticker name!')
-        return redirect('add_stock')
-    else:
-        context = {}
-        stockdata = Stock.objects.all()
+                    return redirect('quotes:existing_stock')
         
+        messages.warning(request,'Please enter a valid ticker name!')
+        return redirect('quotes:existing_stock')
+    else:
+        stockdata = Stock.objects.all()
+
         if stockdata:
             ticker_list = [stock.ticker for stock in stockdata]
             ticker_list = list(set(ticker_list))
             tickers = ','.join(ticker_list)
             stockdata1 = stock_data_batch(tickers)
-        
+            return render(request, 'quotes/add_stock.html', {'stockdata': stockdata1})     
         else:
             messages.info(request, 'You dont have any stock in your portfolio!')
-        
-        return render(request, 'quotes/add_stock.html', {'stockdata': stockdata1})
-        #return render(request, 'add_stock.html', {'stockdata': stockdata})   
-            
-                
+        return render(request, 'quotes/add_stock.html')
                 
                 
         
@@ -146,7 +159,7 @@ def delete(request, stock_symbol): #### replace stock_ticker as stock_id.
     item.delete()
     messages.success(request, ("Stock has been deleted !"))
 
-    return redirect(add_stock) #after delete -> still in add_stock page
+    return redirect('quotes:existing_stock') #after delete -> still in add_stock page
 
 #def delete(request, stock_id):
 #    item = Stock.objects.get(pk= stock_id) # primary key = stock id
