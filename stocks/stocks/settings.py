@@ -126,7 +126,11 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 AUTH_USER_MODEL = 'account.Account'
+
+LOGIN_REDIRECT_URL = '/account/dashboard'
+LOGIN_URL = '/account/registration/login/'
 IEX_API_TOKEN = 'pk_d7d6fe0afa014e21a15addd0105fd7c6'
 
 SANDBOX_IEX_API_TOKEN = 'Tpk_ddec8e192cce4af39916c2d21043672b'
 
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

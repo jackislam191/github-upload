@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block title %}Edit User Detail{% endblock %}
+
+{% block content %}
+
+
+<div>
+    <form method="post">
+        {% if userform.is_valid  %}
+            <div>
+                <h2>Details successfully updated!</h2>
+            </div>
+            <p>
+                <a href="{% url "account:dashboard" %}">Back to Dashboard</a>
+            </p>
+        {%else%}
+            <h3>Change your details</h3>
+            <p>You can edit your account using the following form:</p>
+        {% endif %}
+        {% if form.errors %}
+        <div>
+            Error: Please try again!
+        </div>
+        {% endif %}
+
+        {% csrf_token %}
+        <label class="small font-weight-bold">{{ userform.email.label}}</label>
+        {{ userform.email }}
+        <label class="small font-weight-bold">{{ userform.username.label}}</label>
+        {{ userform.username }}
+
+        <button type="submit" value="Save changes">Save Changes</button>
+        
+    </form>
+</div>
+{% endblock content %}
