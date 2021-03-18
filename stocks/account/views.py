@@ -1,15 +1,16 @@
 from django.shortcuts import render, redirect
 from django.contrib.sites.shortcuts import get_current_site
-from django.contrib.auth import login, logout
+from django.contrib.auth import login, logout, update_session_auth_hash
 from django.http import HttpResponse
 from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
-from .forms import RegistrationForm, UserEditForm
+from .forms import RegistrationForm, UserEditForm, PwdResetConfirmForm
 from .models import Account
 from .token import account_activation_token
 from django.contrib.auth.decorators import login_required
-
+from django.contrib.auth.forms import SetPasswordForm
+from django.contrib import messages
 # Create your views here.
 @login_required
 def dashboard(request):
@@ -27,6 +28,20 @@ def edit_details(request):
         userform = UserEditForm(instance=request.user)
     
     return render(request,'account/user/edit_details.html', {'userform': userform})
+@login_required
+def user_change_password(request):
+    if request.method == 'POST':
+        form = SetPasswordForm(user=request.user, data=request.POST)
+        if form.is_valid():
+            form.save()
+            update_session_auth_hash(request, form.user)
+            messages.success(request, 'Password Changed Successfully!')
+            return redirect('account:login')
+    else:
+        form = SetPasswordForm(user=request.user)
+    
+    return render(request, 'account/user/user_change_password.html', {'form': form})
+
 
 def account_register(request):
 

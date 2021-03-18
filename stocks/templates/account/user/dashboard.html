@@ -3,4 +3,8 @@
 
 {% block content %}
 <h1>User Dashboard</h1>
+
+<span>Hi {{ user.username }}</span>
+<span><a href="{% url 'account:edit_details' %}" >Edit profile</a></span>
+<span><a href="{% url 'account:user_change_password' %}" >Change Password</a></span>
 {% endblock content %}

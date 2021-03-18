@@ -1,6 +1,6 @@
 from django import forms
 from .models import Account
-from django.contrib.auth.forms import AuthenticationForm, PasswordResetForm
+from django.contrib.auth.forms import AuthenticationForm, PasswordResetForm, SetPasswordForm
 
 class LoginForm(AuthenticationForm):
     username = forms.CharField(widget=forms.TextInput(
@@ -72,6 +72,7 @@ class UserEditForm(forms.ModelForm):
         self.fields['username'].required = True
         self.fields['email'].required = True
 
+
 class PwdResetForm(PasswordResetForm):
 
     email = forms.EmailField(max_length=254, widget=forms.TextInput(
@@ -86,3 +87,13 @@ class PwdResetForm(PasswordResetForm):
                 'This email is not existed! Please use correct email address!')
         
         return email
+
+class PwdResetConfirmForm(SetPasswordForm):
+    new_password1 = forms.CharField(
+        label='New Password', widget=forms.PasswordInput(
+            attrs={'class': 'form-control mb-3', 'placeholder': 'New Password', 'id': 'form-newpass'}))
+    
+    new_password2 = forms.CharField(
+        label='Repeat password', widget=forms.PasswordInput(
+            attrs={'class': 'form-control mb-3', 'placeholder': 'New Password', 'id': 'form-new-pass2'}))
+    
