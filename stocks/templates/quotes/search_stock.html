@@ -1,6 +1,65 @@
 {% extends 'base.html' %}
-{%  block content %}
+{% load static %}
 
+
+{% block scripts %}
+  <script src="{% static 'button.js' %}" defer></script>
+{% endblock scripts %}
+
+{% block title %}
+Search stock - 
+{% if stock_data %}
+{{  stock_data.symbol }} 
+
+{% endif %}
+
+
+{% endblock %}
+{%  block content %}
+<!-- Modal -->
+<div class="modal fade" id="addtoportfolioModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div id="alert-box"></div>
+          <form action="{% url 'quotes:add-to-portfolio' %}" id="position-form" id="modal-body">
+              {% csrf_token %}
+              {% if PositionForm.errors %}
+              <p>Please correct the following errors:</p>
+                      {% for field in PositionForm %}
+                          {% if field.errors %}
+                              <div class="alert alert-primary" role="alert">
+                                  {{ field.label }}: {{ field.errors|striptags }}
+                              </div>
+                          {% endif %}
+                      {% endfor %}
+                {% endif %}
+                <!--<label>{{ PositionForm.stock_symbol.label }}<span class="text-muted small">(Required)</span></label>
+                {{ PositionForm.stock_symbol }}
+                <label>{{ PositionForm.stock_shares.label }}<span class="text-muted small">(Required)</span></label>
+                {{ PositionForm.stock_shares }}-->
+                {{PositionForm}}
+                <button type="submit" class="btn btn-primary">Save changes</button>
+            </form>
+                
+          </div>
+      </div>
+    </div>
+  </div>
+<script>
+   // $(document).ready(function(){
+    //    $("#test").click(function(){
+    //        $("#testDiv").append('<p>'+ "Hello" +'</p>');
+            //console.log("HI!");
+    //    });
+   // });
+</script>
 
 {% if ticker %}
     {{ ticker }}
@@ -10,7 +69,9 @@
     {% if stock_data.Error %}
         There was a problem with your ticker,
         please try again..
-
+        <div>
+            <button type="submit"><a href="{% url 'account:dashboard' %}">Back</a></button>
+        </div>
     {% else %}
         <h1>{{  stock_data.companyName }} </h1><br/>
         Price : {{  stock_data.latestPrice }} <br/>
@@ -19,7 +80,12 @@
         YTD Change: {{  stock_data.ytdChange }} <br/>
         52Wk High: {{  stock_data.week52High }} <br/>
         52Wk Low: {{  stock_data.week52Low }} <br/>
+        
 
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addtoportfolioModal" id='add-stock-btn'>
+            Add to Portfolio
+        </button>
+        <button type="button" class="btn btn-primary"><a href="{% url 'account:dashboard' %}">Back</a></button>
     {% endif %}
 {% endif %}
 

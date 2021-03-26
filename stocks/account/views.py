@@ -10,7 +10,7 @@ from .models import Account
 from .token import account_activation_token
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import SetPasswordForm
-from django.contrib import messages
+#from django.contrib import messages
 # Create your views here.
 @login_required
 def dashboard(request):
@@ -35,7 +35,7 @@ def user_change_password(request):
         if form.is_valid():
             form.save()
             update_session_auth_hash(request, form.user)
-            messages.success(request, 'Password Changed Successfully!')
+            #messages.success(request, 'Password Changed Successfully!')
             return redirect('account:login')
     else:
         form = SetPasswordForm(user=request.user)

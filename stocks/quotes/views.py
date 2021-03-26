@@ -1,14 +1,24 @@
 from django.shortcuts import render, redirect
 from django.conf import settings
 from django.contrib import messages
-from .models import Stock
-from .forms import StockForm
+from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+from .models import Stock, Position
+from account.models import Account
+from .forms import StockForm, PositionForm
 import requests 
 import json
 # Create your views here.
 
 
 def home(request):
+    #a = Account.objects.get(username = request.user)
+    #b = Position.objects.all()
+    #print(a)
+    #print(b)
+    #print(settings.AUTH_USER_MODEL)
+    #user_id = request.user.id
+    #print(user_id)
     return render(request, 'home.html')
 
 def about(request):
@@ -35,7 +45,29 @@ def search_stock_data(request):
         ticker = request.POST['ticker']
         # pk_d7d6fe0afa014e21a15addd0105fd7c6
         stockData = iex_stock_data(ticker)
-    return render(request, 'quotes/search_stock.html', {'stock_data': stockData})
+    position_form = PositionForm(initial = {'stock_symbol': stockData['symbol']})
+    context = {
+        'stock_data': stockData,
+        'PositionForm':position_form
+  
+    }
+    return render(request, 'quotes/search_stock.html', context)
+
+@login_required
+def add_to_portfolio(request):
+    if request.is_ajax():
+        stock_symbol = request.POST.get('stock_symbol')
+        stock_shares = request.POST.get('stock_shares')
+        #user_id = request.user.id
+        user_obj = Account.objects.get(username = request.user)
+        #created_by = Account.objects.get(username = request.user)
+        #print(created_by)
+        Position.objects.create(stock_symbol=stock_symbol, stock_shares= stock_shares, created_by= user_obj)
+        data = {'msg': 'send'}
+        return JsonResponse(data)
+    
+    return JsonResponse({})
+
 
 
 def search_batch_stockdata(stock_tickers):
