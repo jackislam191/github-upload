@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Portfolio overview
+
+{% endblock %}
+
+{% block content %}
+<h1>This is portfolio overview!</h1>
+<table class="table">
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">Stock Symbol</th>
+      <th scope="col">Stock Shares</th>
+      <th scope="col">Stock Price (USD)</th>
+      <th scope="col">Delete</th>
+      
+      
+    </tr>
+  </thead>
+  
+  <tbody>
+    {% if portfolio %}
+      {% for item in portfolio %} 
+          
+          
+            <tr>
+                <td>{{ item.stock_symbol }}</td>
+                <td>{{ item.stock_shares }}</td>
+                <td>{{ item.stock_price }}</td>
+                <td><a href="/">Delete Stock</a></td> 
+            </tr>
+          
+      {% endfor %}
+
+    
+    {% endif %}
+
+  </tbody>
+</table>
+{% endblock %}
+

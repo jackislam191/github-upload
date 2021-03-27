@@ -21,7 +21,7 @@ Search stock -
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+          <h5 class="modal-title" id="exampleModalLabel">Add to your portfolio</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
@@ -40,12 +40,13 @@ Search stock -
                           {% endif %}
                       {% endfor %}
                 {% endif %}
-                <!--<label>{{ PositionForm.stock_symbol.label }}<span class="text-muted small">(Required)</span></label>
+                <label>{{ PositionForm.stock_symbol.label }}<span class="text-muted small">(Required)</span></label>
                 {{ PositionForm.stock_symbol }}
                 <label>{{ PositionForm.stock_shares.label }}<span class="text-muted small">(Required)</span></label>
-                {{ PositionForm.stock_shares }}-->
-                {{PositionForm}}
-                <button type="submit" class="btn btn-primary">Save changes</button>
+                {{ PositionForm.stock_shares }}
+                <label>{{ PositionForm.stock_price.label }}<span class="text-muted small">(Required)</span></label>
+                {{ PositionForm.stock_price }}
+                <button type="submit" class="btn btn-primary">Add to portfolio</button>
             </form>
                 
           </div>

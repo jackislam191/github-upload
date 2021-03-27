@@ -19,6 +19,11 @@ def home(request):
     #print(settings.AUTH_USER_MODEL)
     #user_id = request.user.id
     #print(user_id)
+    #test_qs = Position.objects.filter(created_by= user_id)
+    
+    #print(test_qs[0].stock_symbol)
+    #print(type(test_qs[0].stock_shares))
+    
     return render(request, 'home.html')
 
 def about(request):
@@ -58,15 +63,24 @@ def add_to_portfolio(request):
     if request.is_ajax():
         stock_symbol = request.POST.get('stock_symbol')
         stock_shares = request.POST.get('stock_shares')
-        #user_id = request.user.id
+        stock_prices = request.POST.get('stock_price')
+        print(stock_prices)
+        user_id = request.user.id
         user_obj = Account.objects.get(username = request.user)
+        #print(type(stock_shares)) type stock shares --> str
+        if Position.objects.filter(created_by = user_id, stock_symbol = stock_symbol).exists():
+            if int(stock_shares) > 0 & float(stock_prices) > 0:
+                Position.objects.filter(created_by = user_id, stock_symbol = stock_symbol).update(stock_shares= int(stock_shares), stock_price=float(stock_prices))
+                data = {'msg': 'updated!'}
+            ###Todo ---> query update the value , (cannot be negative!!!!!)
+        else:
         #created_by = Account.objects.get(username = request.user)
         #print(created_by)
-        Position.objects.create(stock_symbol=stock_symbol, stock_shares= stock_shares, created_by= user_obj)
-        data = {'msg': 'send'}
-        return JsonResponse(data)
+            Position.objects.create(stock_symbol=stock_symbol, stock_shares= stock_shares, created_by= user_obj, stock_price = stock_prices)
+            data = {'msg': 'added'}
+            return JsonResponse(data)
     
-    return JsonResponse({})
+    return JsonResponse(data)
 
 
 
@@ -171,6 +185,7 @@ def existing_stock(request):
             ticker_list = list(set(ticker_list))
             tickers = ','.join(ticker_list)
             stockdata1 = stock_data_batch(tickers)
+            print(stockdata1)
             return render(request, 'quotes/add_stock.html', {'stockdata': stockdata1})     
         else:
             messages.info(request, 'You dont have any stock in your portfolio!')
