@@ -60,50 +60,39 @@ def search_stock_data(request):
 
 @login_required
 def add_to_portfolio(request):
+    print(request.POST)
     if request.is_ajax():
         stock_symbol = request.POST.get('stock_symbol')
         stock_shares = request.POST.get('stock_shares')
         stock_prices = request.POST.get('stock_price')
-        print(stock_prices)
+        int_stock_shares = int(stock_shares)
+        float_stock_prices = float(stock_prices)
+        
         user_id = request.user.id
         user_obj = Account.objects.get(username = request.user)
         #print(type(stock_shares)) type stock shares --> str
-        if Position.objects.filter(created_by = user_id, stock_symbol = stock_symbol).exists():
-            if int(stock_shares) > 0 & float(stock_prices) > 0:
-                Position.objects.filter(created_by = user_id, stock_symbol = stock_symbol).update(stock_shares= int(stock_shares), stock_price=float(stock_prices))
-                data = {'msg': 'updated!'}
-            ###Todo ---> query update the value , (cannot be negative!!!!!)
+        if (int(stock_shares) > 0 and float(stock_prices)> 0):
+            if Position.objects.filter(created_by = user_id, stock_symbol = stock_symbol).exists():
+                try:
+                    Position.objects.filter(created_by = user_id, stock_symbol = stock_symbol).update(stock_shares= int(stock_shares), stock_price=float(stock_prices))
+                    data = {'success': 'updated'}
+                except:
+                    data = {'fail': 'failed_to_updated'}
+                ###Todo ---> query update the value , (cannot be negative!!!!!)
+            else:
+
+            #created_by = Account.objects.get(username = request.user)
+            #print(created_by)
+                try:
+                    Position.objects.create(stock_symbol=stock_symbol, stock_shares= stock_shares, created_by= user_obj, stock_price = stock_prices)
+                    data = {'success': 'added'}
+                #return JsonResponse(data)
+                except:
+                    data = {'fail': 'failed_to_added'}
         else:
-        #created_by = Account.objects.get(username = request.user)
-        #print(created_by)
-            Position.objects.create(stock_symbol=stock_symbol, stock_shares= stock_shares, created_by= user_obj, stock_price = stock_prices)
-            data = {'msg': 'added'}
-            return JsonResponse(data)
+            data = {'fail': 'failed_to_added'}
     
     return JsonResponse(data)
-
-
-
-def search_batch_stockdata(stock_tickers):
-    datalist = []
-    try:
-        token = settings.sandbox_IEX_API_token
-        url = 'https://sandbox.iexapis.com/stable/stock/market/batch?symbols=' + stock_tickers + '&types=quote&token=' + token
-        data = requests.get(url)
-
-        if data.status_code == 200:
-            data = json.loads(data.content)
-            for item in data:
-                datalist.append(data[item]['quote'])
-                ##THE JSON FILE FORMAT
-                ####STOCK_TICKER
-                ####### quote
-                ########## STOCK_TICKER_DATA
-        else:
-            data = {'Error': 'There are errors, please try again.'}
-    except Exception as e:
-        data = {'Error': 'Connection Error! Please try again!'}
-    return data_list
 
 
 

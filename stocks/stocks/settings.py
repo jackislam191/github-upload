@@ -39,7 +39,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'quotes',
     'portfolio',
-    'account'
+    'account',
+    #django ployly dash first try
+    'django_plotly_dash.apps.DjangoPlotlyDashConfig',
 ]
 
 MIDDLEWARE = [
@@ -50,6 +52,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    #'django_plotly_dash.middleware.BaseMiddleware',
 ]
 
 ROOT_URLCONF = 'stocks.urls'
@@ -122,6 +125,15 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
+
+#If using version 3.0 or later of Django, then the use of frames within HTML documents has to be enabled by adding to the settings.py file:
+X_FRAME_OPTIONS = 'SAMEORIGIN'
+
+
+#CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+#ASGI_APPLICATION = 'djangostock.routing.application'
+
 
 STATIC_URL = '/static/'
 

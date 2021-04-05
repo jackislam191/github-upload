@@ -10,9 +10,11 @@ Portfolio overview
 <table class="table">
   <thead class="thead-dark">
     <tr>
+      
       <th scope="col">Stock Symbol</th>
       <th scope="col">Stock Shares</th>
-      <th scope="col">Stock Price (USD)</th>
+      <th scope="col">Cost (USD)</th>
+      <th scope="col">Stock Latest Price (USD)</th>
       <th scope="col">Delete</th>
       
       
@@ -25,9 +27,11 @@ Portfolio overview
           
           
             <tr>
+                
                 <td>{{ item.stock_symbol }}</td>
                 <td>{{ item.stock_shares }}</td>
                 <td>{{ item.stock_price }}</td>
+                <td>{{ item.stock_latestprice }}</td>
                 <td><a href="/">Delete Stock</a></td> 
             </tr>
           

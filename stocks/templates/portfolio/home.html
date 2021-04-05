@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block title %}
+    Test plotly
+{% endblock %}
+
+{%  block content %}
+
+<h1>plotly testing page</h1>
+{% load plotly_dash %}
+<br>
+{{ plot|safe }}
+{% endblock %}

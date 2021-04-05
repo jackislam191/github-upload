@@ -7,6 +7,7 @@
     <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://cdn.staticfile.org/popper.js/1.15.0/umd/popper.min.js"></script>
     <script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <title>{% block title %}Capstone Project {% endblock %} </title>
     {% block scripts %}
 
@@ -40,10 +41,12 @@
                       <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                         <a class="dropdown-item" href="{% url 'quotes:existing_stock' %}">Add Stock</a>
                         <a class="dropdown-item" href="{% url 'portfolio:overview' %}">Portfolio</a>
-                        <a class="dropdown-item" href="#">Efficient Frontier</a>
+                        <a class="dropdown-item" href="{% url 'portfolio:dashboard' %}">Dashboard</a>
+                        <a class="dropdown-item" href="{% url 'portfolio:efficientfrontier' %}">Efficient Frontier</a>
                       </div>
                     </div>
                   </li>
+                  
                 </ul>
                 <form action="{% url 'quotes:search_stock' %}" class="d-flex" method="POST">
                     {% csrf_token %}

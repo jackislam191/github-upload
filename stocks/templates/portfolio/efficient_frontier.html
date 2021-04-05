@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %}
+    Efficient Frontier
+{% endblock %}
+
+{%  block content %}
+<form action="{% url 'portfolio:efprocess' %}" method='post'>
+    {% if holding %}
+    {% csrf_token %}
+        {% for item in holding %}
+            <!-- input type pass the value format {'TSLA' : ['TSLA']}  -->
+            <input type="checkbox" value="{{item.stock_symbol}}">
+            {{item.stock_symbol}}<br>
+
+
+
+        {% endfor %}
+        <button type="submit">Submit</button>
+    {% endif %}
+</form>
+    
+{% endblock %}
