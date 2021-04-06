@@ -7,33 +7,12 @@ import requests
 import json
 # Create your views here.
 #plotly
-from plotly.offline import plot
-import plotly.graph_objects as go
+
 
 
 def home(request):
-    def scatter():
-        x1 = [1,2,3,4]
-        y1 = [30,35,25,45]
-
-        trace = go.Scatter(
-            x=x1,
-            y=y1
-        )
-        layout = dict(
-            title='simple graph',
-            xaxis=dict(range=[min(x1),max(x1)]),
-            yaxis=dict(range=[min(y1),max(y1)])
-        )
-
-        fig = go.Figure(data=[trace], layout=layout)
-        plot_div = plot(fig, output_type='div', include_plotlyjs=False)
-        return plot_div
-
-    context={
-        'plot': scatter()
-    }
-    return render(request, 'portfolio/home.html', context)
+    
+    return render(request, 'portfolio/home.html')
 
 def get_latest_price(stock_symbol):
     API_token = settings.IEX_API_TOKEN
@@ -123,9 +102,13 @@ def efficient_frontier_select(request):
 def efficient_frontier_post(request):
     if request.method == 'POST':
         print(request.POST)
+        selected_stocklist = request.POST.getlist('stock_symbol')
+        #if checkbox --> ['AAPL', 'ARKK']
+        #selected_stocklist  -->['AAPL', 'ARKK']
+        print(selected_stocklist)
         
-        data = {'request' : request.POST}
         
-    return JsonResponse(data)
+    return JsonResponse(request.POST)
 
 #def efficient_fronter(datalist):
+
