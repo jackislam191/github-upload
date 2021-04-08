@@ -16,6 +16,7 @@ addBtn.addEventListener('click', ()=>{
         formData.append('stock_shares', stocksharesId.value);
         formData.append('stock_price', stockpriceId.value);
 
+
         $.ajax({
             type:'POST',
             url: '/quotes/add_to_portfolio/',

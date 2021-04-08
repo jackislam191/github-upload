@@ -1,8 +1,10 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
 from django.http import JsonResponse
 from quotes.models import Position
+from . import utils as ef
 import requests 
 import json
 # Create your views here.
@@ -81,21 +83,59 @@ def portfolio_overview(request):
         'portfolio': test_list
 
     }
+    
     return render(request, 'portfolio/overview.html', context)
 
+def delete(request, stock_symbol):
+    item = Position.objects.filter(created_by = request.user, stock_symbol= stock_symbol)
+    item.delete()
+    messages.success(request, ("Stock has been deleted !"))
+    return redirect('portfolio:overview')
 
 def portfolio_dashboard(request):
     user_holding = Position.objects.filter(created_by = request.user)
     
     return render(request, 'portfolio/dashboard.html')
 
-
+@login_required
 def efficient_frontier_select(request):
     user_holding = Position.objects.filter(created_by = request.user)
-    
+    selected_stock = None
+    #ta = None
+    #tb = None
+    #tc = None
+    ef_df = None
+    json_df = None
+    fy_json = None
+    fx_json = None
+    w_df_json = None
+    fxfy_json = None
+    ef_df_html = None
+    efdf_json = None
+    if request.method == 'POST':
+        selected_stock = request.POST.getlist('stock_symbol')
+        
+        ta, tb, tc = ef.combination_frontier(selected_stock)
+        fy_df, fx_df, w_df, fxfy_df, ef_df = ef.transform_frontier_todf(ta,tb,tc, selected_stock)
+        fy_json = ef.json_format(fy_df)
+        fx_json = ef.json_format(fx_df)
+        w_df_json = ef.json_format(w_df)
+        fxfy_json = ef.json_format(fxfy_df)
+        efdf_json = ef.json_format(ef_df)
+        ef_df_html = ef_df.to_html()
+        print(efdf_json)
     context = {
-        'holding': user_holding
+        'holding': user_holding,
+        'selected_stock': selected_stock,
+        'frontier_y': fy_json,
+        'frontier_x': fx_json,
+        'recommend_weighting':w_df_json,
+        'fxfy': fxfy_json,
+        'df':ef_df_html,
+        'efdf': efdf_json,
+        
     }
+    
     return render(request, 'portfolio/efficient_frontier.html', context)
 
 

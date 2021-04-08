@@ -40,8 +40,7 @@ INSTALLED_APPS = [
     'quotes',
     'portfolio',
     'account',
-    #django ployly dash first try
-    'django_plotly_dash.apps.DjangoPlotlyDashConfig',
+    'home'
 ]
 
 MIDDLEWARE = [

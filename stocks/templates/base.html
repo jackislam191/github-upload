@@ -15,6 +15,8 @@
     {% endblock scripts %}
 </head>
 <body>
+  {% include 'topnavbar.html' %}
+  <!--
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
       {% if user.is_authenticated %}
@@ -40,7 +42,6 @@
                         Stock Management
                       </button>
                       <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <a class="dropdown-item" href="{% url 'quotes:existing_stock' %}">Add Stock</a>
                         <a class="dropdown-item" href="{% url 'portfolio:overview' %}">Portfolio</a>
                         <a class="dropdown-item" href="{% url 'portfolio:dashboard' %}">Dashboard</a>
                         <a class="dropdown-item" href="{% url 'portfolio:efficientfrontier' %}">Efficient Frontier</a>
@@ -59,15 +60,15 @@
           </nav>
       
       {% else %}
-        <span><a href="{% url 'account:login' %}">Login</a></span>
-        <span><a href="{% url 'account:register' %}">Register</a></span>
-        <span><a href="{% url 'account:pwdreset' %}">Forgot Password</a></span>
+        <li><a href="{% url 'account:login' %}">Login</a></li>
+        <li><a href="{% url 'account:register' %}">Register</a></li>
+        <li><a href="{% url 'account:pwdreset' %}">Forgot Password</a></li>
       {% endif %}
       
       
       
     </div>
-  </nav>
+  </nav>-->
    <!--<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
           <a class="navbar-brand" href="{% url 'quotes:home' %}">Stock Portfolio</a>

@@ -4,8 +4,35 @@
     Efficient Frontier
 {% endblock %}
 
+{% block scripts %}
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript">
+    google.charts.load('current', {packages: ['corechart']});
+    google.charts.setOnLoadCallback(drawChart);
+    function drawChart() {
+        var data = new google.visualization.DataTable();
+        data.addColumn('number', 'Return');
+        data.addColumn('number', 'Risk');
+        data.addRows({{ fxfy|safe }});
+        // Instantiate and draw the chart.
+
+        var options ={
+            title: 'Efficient Frontier',
+            curveType: 'function',
+          legend: { position: 'bottom' }
+
+            
+        }
+        var chart = new google.visualization.LineChart(document.getElementById('myPieChart'));
+        chart.draw(data, options);
+  
+    }
+  </script>
+  
+{% endblock scripts %}
+
 {%  block content %}
-<form action="{% url 'portfolio:efprocess' %}" method='post' id='checkbox-stock-form'>
+<form action="" method='post' id='checkbox-stock-form'>
     {% if holding %}
     {% csrf_token %}
         {% for item in holding %}
@@ -19,5 +46,14 @@
         <button type="submit" id="submit-stock-btn">Submit</button>
     {% endif %}
 </form>
+
+        {% if df %}
+    {{ df|safe }}
+        {% endif %}
+
+</table>
+{% if fxfy %}
+<div id="myPieChart" style="width: 900px; height: 500px;" ></div>
+{% endif %}
     
 {% endblock %}

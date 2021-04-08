@@ -1,0 +1,64 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href='home:homepage'>Portfolio Management</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse justify-content-end" id="navbarNavDropdown">
+      <ul class="navbar-nav">
+    
+        
+        {% if user.is_authenticated %}
+        <li class="nav-item">
+            <a class="nav-link" href="#">Hi {{ user.username }}</a>
+        </li>
+        
+        <li class="nav-item">
+            <div class="dropdown">
+              <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+               Portfolio Management
+              </button>
+              <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                <a class="dropdown-item" href="{% url 'portfolio:overview' %}">Portfolio overview</a>
+                <a class="dropdown-item" href="{% url 'portfolio:dashboard' %}">Dashboard</a>
+                <a class="dropdown-item" href="{% url 'portfolio:efficientfrontier' %}">Efficient Frontier</a>
+              </div>
+            </div>
+          </li>
+        <li class="nav-item">
+            <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                 Accoount Management
+                </button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                <a class="nav-link" href="{% url 'account:edit_details' %}">Edit Account</a>
+                <a class="nav-link" href="{% url 'account:logout' %}">Logout</a>
+                </div>
+              </div>
+            
+        </li>
+        
+           
+        
+       
+        
+        
+        {% else %}
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'account:login' %}">Login</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'account:register' %}">Register</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'account:pwdreset' %}">Register</a>
+          </li>
+        {% endif %}
+      </ul>
+      <form action="{% url 'quotes:search_stock' %}" class="d-inline-flex p-2" method="POST">
+        {% csrf_token %}
+      <input class="form-control me-2" type="search" placeholder="Type stock ticker here" aria-label="Search" name="ticker">
+      <button class="btn btn-outline-secondary" type="submit">Stock Quote</button>
+    </form>
+
+    </div>
+  </nav>

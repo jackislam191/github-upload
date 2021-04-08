@@ -9,4 +9,5 @@ urlpatterns = [
     path('dashboard/',views.portfolio_dashboard, name='dashboard'),
     path('efficient_frontier/', views.efficient_frontier_select, name='efficientfrontier'),
     path('efficient_frontier_process/', views.efficient_frontier_post, name='efprocess'),
+    path('delete_portfolio/<stock_symbol>',views.delete, name='delete')
 ]
