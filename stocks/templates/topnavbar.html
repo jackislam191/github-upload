@@ -1,5 +1,5 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" href='home:homepage'>Portfolio Management</a>
+    <a class="navbar-brand" href="{% url 'home:homepage' %}">Portfolio Management</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -30,6 +30,7 @@
                  Accoount Management
                 </button>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                <a class="nav-link" href="{% url 'account:dashboard' %}">Account overview</a>
                 <a class="nav-link" href="{% url 'account:edit_details' %}">Edit Account</a>
                 <a class="nav-link" href="{% url 'account:logout' %}">Logout</a>
                 </div>
@@ -49,9 +50,7 @@
         <li class="nav-item">
           <a class="nav-link" href="{% url 'account:register' %}">Register</a>
         </li>
-        <li class="nav-item">
-            <a class="nav-link" href="{% url 'account:pwdreset' %}">Register</a>
-          </li>
+        
         {% endif %}
       </ul>
       <form action="{% url 'quotes:search_stock' %}" class="d-inline-flex p-2" method="POST">

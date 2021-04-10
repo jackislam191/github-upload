@@ -112,18 +112,35 @@ def efficient_frontier_select(request):
     fxfy_json = None
     ef_df_html = None
     efdf_json = None
+    list_efdf = None
+    efdf_split = None
+    fxfy_record = None
+    w_df_split = None
+    test_chart = None
     if request.method == 'POST':
         selected_stock = request.POST.getlist('stock_symbol')
-        
         ta, tb, tc = ef.combination_frontier(selected_stock)
         fy_df, fx_df, w_df, fxfy_df, ef_df = ef.transform_frontier_todf(ta,tb,tc, selected_stock)
         fy_json = ef.json_format(fy_df)
         fx_json = ef.json_format(fx_df)
-        w_df_json = ef.json_format(w_df)
-        fxfy_json = ef.json_format(fxfy_df)
-        efdf_json = ef.json_format(ef_df)
+        #w_df_json = ef.json_format(w_df)
+        #fxfy_json = json.loads(ef.json_format(fxfy_df))
+        #efdf_json = ef.json_format(ef_df)
         ef_df_html = ef_df.to_html()
-        print(efdf_json)
+        #list_efdf = json.loads(efdf_json)
+        #efdf_split = json.loads(ef.json_format_split(ef_df))
+        fxfy_record = json.loads(ef.json_format_record(fxfy_df))
+        w_df_split = json.loads(ef.json_format_split(w_df))
+        #print(list_efdf)
+        #print(type(list_efdf))
+        
+        ###output the image of EF
+        stock_df_pre = ef.dfPrepare(selected_stock)
+        log_st_df = ef.np_log_return(stock_df_pre)
+        eR, eV, sR, ow, aw = ef.efficient_frontier_pre(log_st_df)
+        max_sr, maxER, minER, maxVo, minVo = ef.get_max_index(eR,eV,sR)
+        fy, fx, rw = ef.frontier_test(eR, max_sr, maxER, log_st_df, ow)
+        test_chart = ef.get_img(eV, eR, sR, max_sr ,fx,fy)
     context = {
         'holding': user_holding,
         'selected_stock': selected_stock,
@@ -133,7 +150,11 @@ def efficient_frontier_select(request):
         'fxfy': fxfy_json,
         'df':ef_df_html,
         'efdf': efdf_json,
-        
+        'array_efdf':list_efdf,
+        'efdf_split' : efdf_split,
+        'fxfy_record' : fxfy_record,
+        'w_df_split' : w_df_split,
+        'test_chart': test_chart
     }
     
     return render(request, 'portfolio/efficient_frontier.html', context)

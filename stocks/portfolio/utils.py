@@ -5,7 +5,8 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import json
 from scipy.optimize import minimize
-
+from io import BytesIO
+import base64
 def dfPrepare(datalist):
     dfDict={}
     numDatalist = len(datalist)
@@ -70,23 +71,6 @@ def get_max_index(expected_return, expected_volatility, sharpe_ratio):
     minX = expected_volatility[expected_volatility.argmin()]
     return maxindex_sr, maxY, minY, maxX, minX
 
-#def get_ret_vol_sr(log_return_df_output, weights):
-#    weights = np.array(weights)
-#    ret = np.sum(log_return_df_output.mean() * weights) * 252
-#    vol = np.sqrt(np.dot(weights.T, np.dot(log_return_df_output.cov()*252, weights)))
-#    sr = ret / vol
-#    return np.array([ret, vol, sr])
-#
-#
-#def neg_sharpe(log_st_df,weights):
-## the number 2 is the sharpe ratio index from the get_ret_vol_sr
-#    return get_ret_vol_sr(log_st_df, weights)[2] * -1
-#
-#print(neg_sharpe)
-#def check_sum(weights):
-#    
-#    #return 0 if sum of the weights is 1
-#    return np.sum(weights)-1
 
 def minimize_ef(log_return_df_output, weights_output):
 #    
@@ -280,11 +264,6 @@ def combination_frontier(stock_list):
     return fy, fx, rw
 
 
-def test_around(arr1):
-    arr1 = np.around(arr1, decimals=2)
-    return arr1
-
-
 
 def transform_frontier_todf(frontierY, frontierX, Weighting, stock_list):
     new_fy = np.around(frontierY, decimals=2)
@@ -295,16 +274,14 @@ def transform_frontier_todf(frontierY, frontierX, Weighting, stock_list):
     recommend_weight_df = pd.DataFrame(new_weight, columns= stock_list)
     fx_fydf = pd.concat([frontierX_df, frontierY_df], axis=1)
     combined_df = pd.concat([frontierY_df, frontierX_df, recommend_weight_df], axis=1)
-
+    
     return frontierY_df, frontierX_df,recommend_weight_df, fx_fydf, combined_df
-stock_list = ['AAPL', 'TSLA']
+#stock_list = ['AAPL', 'TSLA']
+##
+#F1, F2, RW1 = combination_frontier(stock_list)
+##
+#fy_df, fx_df, rw_df, fx_fydf, combindf = transform_frontier_todf(F1, F2, RW1, stock_list)
 #
-F1, F2, RW1 = combination_frontier(stock_list)
-#
-fy_df, fx_df, rw_df, fx_fydf, combindf = transform_frontier_todf(F1, F2, RW1, stock_list)
-#
-
-
 
 def json_format(res_df):
     df_json = res_df.to_json(orient="values")
@@ -313,3 +290,47 @@ def json_format(res_df):
     return result_json_df
 
 
+def json_format_split(res_df):
+    df_json = res_df.to_json(orient="split")
+    parsed = json.loads(df_json)
+    result_json_df = json.dumps(parsed, indent=4)
+    return result_json_df
+
+def json_format_record(res_df):
+    df_json = res_df.to_json(orient="records")
+    parsed = json.loads(df_json)
+    result_json_df = json.dumps(parsed, indent=4)
+    return result_json_df
+
+
+def to_img():
+    buffer = BytesIO()
+    plt.savefig(buffer, format='png')
+    buffer.seek(0)
+    image_png = buffer.getvalue()
+    graph = base64.b64encode(image_png)
+    graph = graph.decode('utf-8')
+    buffer.close()
+    return graph
+
+def get_img(x,y,sr, maxindex_sr, fx,fy):
+    plt.switch_backend('AGG')
+    plt.figure(figsize=(12,8))
+    plt.scatter(x,y, c=sr)
+    plt.xlabel("Risk(Expected Volatility)")
+    plt.ylabel("Return (Expected Return)")
+    plt.colorbar(label="Sharpe Ratio")
+    #plot the efficient frontier
+    plt.scatter(x[maxindex_sr], y[maxindex_sr],c='red')
+    plt.plot(fx,fy, 'r--', linewidth=3)
+    plt.tight_layout()
+    chart = to_img()
+    return chart
+#stock_list = ['AAPL', 'TSLA','GME']
+###
+#stock_df_pre = dfPrepare(stock_list)
+#log_st_df = np_log_return(stock_df_pre)
+#eR, eV, sR, ow, aw = efficient_frontier_pre(log_st_df)
+#max_sr, maxER, minER, maxVo, minVo = get_max_index(eR,eV,sR)
+#fy, fx, rw = frontier_test(eR, max_sr, maxER, log_st_df, ow)
+#to_img(eV, eR, sR, max_sr ,fx,fy)
