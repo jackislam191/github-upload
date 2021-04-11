@@ -4,9 +4,14 @@ from django.contrib.auth.decorators import login_required
 from django.conf import settings
 from django.http import JsonResponse
 from quotes.models import Position
+from account.models import Account
 from . import utils as ef
+from .forms import SaveEfficientFrontierForm
+from .models import Portfolio
+from .processimg import get_ef_image
 import requests 
 import json
+
 # Create your views here.
 #plotly
 
@@ -117,6 +122,7 @@ def efficient_frontier_select(request):
     fxfy_record = None
     w_df_split = None
     test_chart = None
+    save_ef_form = None
     if request.method == 'POST':
         selected_stock = request.POST.getlist('stock_symbol')
         ta, tb, tc = ef.combination_frontier(selected_stock)
@@ -141,6 +147,10 @@ def efficient_frontier_select(request):
         max_sr, maxER, minER, maxVo, minVo = ef.get_max_index(eR,eV,sR)
         fy, fx, rw = ef.frontier_test(eR, max_sr, maxER, log_st_df, ow)
         test_chart = ef.get_img(eV, eR, sR, max_sr ,fx,fy)
+
+        save_ef_form = SaveEfficientFrontierForm(initial={'name':selected_stock
+            ,'description':selected_stock})
+        
     context = {
         'holding': user_holding,
         'selected_stock': selected_stock,
@@ -154,11 +164,30 @@ def efficient_frontier_select(request):
         'efdf_split' : efdf_split,
         'fxfy_record' : fxfy_record,
         'w_df_split' : w_df_split,
-        'test_chart': test_chart
+        'test_chart': test_chart,
+        'efform': save_ef_form
     }
     
     return render(request, 'portfolio/efficient_frontier.html', context)
 
+def save_in_portfolio(request):
+    
+    
+    if request.is_ajax():
+        name = request.POST.get('save_name')
+        description = request.POST.get('save_descr')
+        image = request.POST.get('image')
+        user_id = request.user.id
+        user_obj = Account.objects.get(username = request.user)
+        img = get_ef_image(image)
+        try:
+            Portfolio.objects.create(name=name, image=img, description=description, created_by=user_obj)
+            data = {'success' : 'Saved!'}
+        except:
+            data = {'fail': 'Try again later!'}
+            
+    return JsonResponse(data)
+    
 
 def efficient_frontier_post(request):
     if request.method == 'POST':
