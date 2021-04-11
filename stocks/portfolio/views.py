@@ -13,9 +13,6 @@ import requests
 import json
 
 # Create your views here.
-#plotly
-
-
 
 def home(request):
     
@@ -97,10 +94,24 @@ def delete(request, stock_symbol):
     messages.success(request, ("Stock has been deleted !"))
     return redirect('portfolio:overview')
 
+@login_required
 def portfolio_dashboard(request):
-    user_holding = Position.objects.filter(created_by = request.user)
-    
-    return render(request, 'portfolio/dashboard.html')
+    #user_holding = Position.objects.filter(created_by = request.user)
+    user_portfolio = Portfolio.objects.filter(created_by = request.user)
+    user_portfolio_value = Portfolio.objects.filter(created_by = request.user).values()
+    #<QuerySet [{'id': 3, 'name': "['AAPL', 'TSLA', 'GME', 'AMD']", 'image': 'portfolioEF/60099749-8.png', 'description': "['AAPL', 'TSLA', 'GME', 'AMD']", 'created_by_id': 1, 'created': datetime.datetime(2021, 4, 11, 12, 29, 41, 265449, tzinfo=<UTC>)},
+    # {'id': 2, 'name': "['AAPL', 'TSLA', 'GME', 'AMD']", 'image': 'portfolioEF/1cb2f30e-e.png', 'description': "['AAPL', 'TSLA', 'GME', 'AMD']", 'created_by_id': 1, 'created': datetime.datetime(2021, 4, 11, 12, 24, 56, 916744, tzinfo=<UTC>)}, 
+    # {'id': 1, 'name': "['AAPL', 'TSLA', 'GME', 'AMD']", 'image': 'portfolioEF/968efbbf-8.png', 'description': "['AAPL', 'TSLA', 'GME', 'AMD']", 'created_by_id': 1, 'created': datetime.datetime(2021, 4, 11, 12, 13, 34, 573976, tzinfo=<UTC>)}]>
+    context = {
+        'user_portfolio' : user_portfolio_value,
+    }
+    return render(request, 'portfolio/dashboard.html', context)
+
+def delete_dashboard(request, pk):
+    user_id = request.user
+    Portfolio.objects.filter(created_by = user_id, id=pk).delete()
+
+    return redirect('portfolio:dashboard')
 
 @login_required
 def efficient_frontier_select(request):
@@ -171,8 +182,6 @@ def efficient_frontier_select(request):
     return render(request, 'portfolio/efficient_frontier.html', context)
 
 def save_in_portfolio(request):
-    
-    
     if request.is_ajax():
         name = request.POST.get('save_name')
         description = request.POST.get('save_descr')
@@ -185,7 +194,7 @@ def save_in_portfolio(request):
             data = {'success' : 'Saved!'}
         except:
             data = {'fail': 'Try again later!'}
-            
+
     return JsonResponse(data)
     
 
@@ -195,10 +204,8 @@ def efficient_frontier_post(request):
         selected_stocklist = request.POST.getlist('stock_symbol')
         #if checkbox --> ['AAPL', 'ARKK']
         #selected_stocklist  -->['AAPL', 'ARKK']
-        print(selected_stocklist)
-        
-        
+        print(selected_stocklist)  
     return JsonResponse(request.POST)
 
-#def efficient_fronter(datalist):
+
 

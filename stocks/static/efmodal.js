@@ -68,7 +68,7 @@ saveBtn.addEventListener('click', () =>{
             //dataType: "json",
             success: function(data){
                 if(data.success == 'Saved!') {
-                    saveAlert('success', 'New Stock added!')
+                    saveAlert('success', 'New Efficient Frontier is added!')
                     $('#savemodal').modal('hide')
                 }
                 else {

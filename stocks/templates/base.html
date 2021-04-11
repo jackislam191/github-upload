@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -15,94 +16,9 @@
     {% endblock scripts %}
 </head>
 <body>
-  {% include 'topnavbar.html' %}
-  <!--
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container-fluid">
-      {% if user.is_authenticated %}
-          <span>Hi {{ user.username }}</span>
-          <span><a href="{% url 'account:logout' %}" >Logout</a></span>
-          <span><a href="{% url 'account:edit_details' %}" >Edit profile</a></span>
-          <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-            <div class="container-fluid">
-              <a class="navbar-brand" href="{% url 'quotes:home' %}">Stock Portfolio</a>
-              <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-              </button>
-              <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                  
-                  <li class="nav-item">
-                    <a class="nav-link" href="{% url 'quotes:about' %}">About</a>
-                  </li>
-    
-                  <li class="nav-item">
-                    <div class="dropdown">
-                      <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Stock Management
-                      </button>
-                      <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <a class="dropdown-item" href="{% url 'portfolio:overview' %}">Portfolio</a>
-                        <a class="dropdown-item" href="{% url 'portfolio:dashboard' %}">Dashboard</a>
-                        <a class="dropdown-item" href="{% url 'portfolio:efficientfrontier' %}">Efficient Frontier</a>
-                      </div>
-                    </div>
-                  </li>
-                  
-                </ul>
-                <form action="{% url 'quotes:search_stock' %}" class="d-flex" method="POST">
-                    {% csrf_token %}
-                  <input class="form-control me-2" type="search" placeholder="Type stock ticker here" aria-label="Search" name="ticker">
-                  <button class="btn btn-outline-secondary" type="submit">Stock Quote</button>
-                </form>
-              </div>
-            </div>
-          </nav>
-      
-      {% else %}
-        <li><a href="{% url 'account:login' %}">Login</a></li>
-        <li><a href="{% url 'account:register' %}">Register</a></li>
-        <li><a href="{% url 'account:pwdreset' %}">Forgot Password</a></li>
-      {% endif %}
-      
-      
-      
-    </div>
-  </nav>-->
-   <!--<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container-fluid">
-          <a class="navbar-brand" href="{% url 'quotes:home' %}">Stock Portfolio</a>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-          <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-              
-              <li class="nav-item">
-                <a class="nav-link" href="{% url 'quotes:about' %}">About</a>
-              </li>
 
-              <li class="nav-item">
-                <div class="dropdown">
-                  <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Stock Management
-                  </button>
-                  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                    <a class="dropdown-item" href="{% url 'quotes:existing_stock' %}">Add Stock</a>
-                    <a class="dropdown-item" href="{% url 'quotes:portfolio' %}">Portfolio</a>
-                    <a class="dropdown-item" href="#">Efficient Frontier</a>
-                  </div>
-                </div>
-              </li>
-            </ul>
-            <form action="{% url 'quotes:search_stock' %}" class="d-flex" method="POST">
-                {% csrf_token %}
-              <input class="form-control me-2" type="search" placeholder="Type stock ticker here" aria-label="Search" name="ticker">
-              <button class="btn btn-outline-secondary" type="submit">Stock Quote</button>
-            </form>
-          </div>
-        </div>
-      </nav>--> 
+  {% include 'topnavbar.html' %}
+
     <div class='container'>
         <br/>
         {% block content %}

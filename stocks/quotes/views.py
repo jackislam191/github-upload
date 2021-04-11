@@ -12,18 +12,6 @@ import json
 
 
 def home(request):
-    #a = Account.objects.get(username = request.user)
-    #b = Position.objects.all()
-    #print(a)
-    #print(b)
-    #print(settings.AUTH_USER_MODEL)
-    #user_id = request.user.id
-    #print(user_id)
-    #test_qs = Position.objects.filter(created_by= user_id)
-    
-    #print(test_qs[0].stock_symbol)
-    #print(type(test_qs[0].stock_shares))
-    
     return render(request, 'home.html')
 
 def about(request):
@@ -130,23 +118,6 @@ def stock_data_batch(stock_tickers):
     
     return stock_list
 
-
-    #else:
-    #    context = {}
-    #    stockdata = Stock.objects.all()
-        
-    #    if stockdata:
-    #        ticker_list = [stock.ticker for stock in stockdata]
-    #        ticker_list = list(set(ticker_list))
-    #        tickers = ','.join(ticker_list)
-    #        stockdata1 = stock_data_batch(tickers)
-    #        
-    #        return render(request, 'quotes/add_stock.html', {'stockdata': stockdata1})
-    #    else:
-    #        messages.info(request, 'You dont have any stock in your portfolio!')
-    #        return render(request, 'quotes/add_stock.html')
-        
-        #return render(request, 'add_stock.html', {'stockdata': stockdata})   
 def existing_stock(request):
     if request.method == 'POST':
         ticker = request.POST['ticker']
@@ -196,14 +167,3 @@ def delete(request, stock_symbol): #### replace stock_ticker as stock_id.
     messages.success(request, ("Stock has been deleted !"))
 
     return redirect('quotes:existing_stock') #after delete -> still in add_stock page
-
-#def delete(request, stock_id):
-#    item = Stock.objects.get(pk= stock_id) # primary key = stock id
-#    item.delete()
-#    messages.success(request, ("Stock has been deleted !"))
-
-#    return redirect(add_stock) #after delete -> still in add_stock page
-#
-#
-#
-#
