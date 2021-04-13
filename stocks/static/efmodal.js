@@ -1,10 +1,6 @@
 //alert
 
-//output csv modal
-const downloadBtn = document.getElementById('download-btn');
 const img = document.getElementById('img');
-const downloadModalbody = document.getElementById('outputcsv-modal-body');
-const csvalertBox = document.getElementById('csv-alert-box')
 //save in portfolio modal
 const saveBtn = document.getElementById('save-btn');
 const saveModalbody = document.getElementById('save-in-database-modal-body');
@@ -21,16 +17,15 @@ console.log(saveEFnameid);
 console.log(saveEFdescid);
 
 if (img){
-    downloadBtn.classList.remove('not-visible')
+    saveBtn.classList.remove('not-visible')
 }
-console.log(downloadBtn);
 console.log(img);
 
 //output csv modal
-downloadBtn.addEventListener('click', () =>{
+saveBtn.addEventListener('click', () =>{
     console.log('clicked');
     img.setAttribute('class', 'w-100')
-    downloadModalbody.prepend(img);
+    saveModalbody.prepend(img);
 })
 
 //csv alert 

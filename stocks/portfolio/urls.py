@@ -12,6 +12,5 @@ urlpatterns = [
     path('efficient_frontier_process/', views.efficient_frontier_post, name='efprocess'),
     path('delete_portfolio/<stock_symbol>',views.delete, name='delete'),
     path('save_in_portfolio/', views.save_in_portfolio, name='save-to-portfolio'),
-    path('output_csv/',views.output_csv, name='output-csv'),
     path('output_csv_test/', views.output_df_csv, name='output-csv-test')
 ]

@@ -24,8 +24,6 @@
     {% endif %}
 </form>
 
-
-
       
 
 
@@ -34,67 +32,11 @@
   <canvas id="myChart"></canvas>
 </div>
 
-
-{% if df %}
-  {{ df|safe }}
-
 <br>
-Chart
-<img src="data:image/png;base64, {{test_chart|safe}}" id='img'>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-  var fxfyData = {{fxfy_record|safe}};
-  ctx = document.getElementById("myChart");
-  var myChart = new Chart(ctx, {
-    type: 'scatter',
-    data: {
-        
-        datasets: [{
-          label: 'Efficient Frontier',
-          data: fxfyData,
-          backgroundColor: 'rgb(255, 99, 132)'
-        }]
-    },
-    options: {
-      responsive:true,
-      parsing: {
-        xAxisKey: 'Volatility',
-        yAxisKey: 'Return'},
-    
-    scales: {
-      x: {
-        type: 'linear',
-        position: 'bottom'
-      }
-    }
-    }
-});
 
 
-</script>
-<!-- output csv Modal -->
-<div class="modal fade" id="outputcsvmodal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Save the Efficient Frontier</h5>
-        <button type="button" class="close btn btn-dark" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body" id='outputcsv-modal-body'>
-        <div id="csv-alert-box"></div>
-              
-              <button type="submit" class="btn btn-primary">Save as CSV</button>
-              
-              
-        </div>
-    </div>
-  </div>
-</div>
-<!-- End of Modal -->
-
-<!-- save in db Modal -->
+  {% if efdf_split %}
+  <!-- save in db Modal -->
 <div class="modal fade" id="savemodal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -134,17 +76,13 @@ Chart
   </div>
 </div>
 <!-- End of Modal -->
-<button type="button" class="btn btn-primary not-visible" data-toggle="modal" data-target="#outputcsvmodal" id='download-btn'>
-  Download
-</button>
-<a href="{% url 'portfolio:output-csv-test' %}" class="btn btn-warning" role="button">Export CSV</a>
-<button type="button" class="btn btn-primary not-visible" data-toggle="modal" data-target="#savemodal" id='save-btn'>
-  Save in Portfolio History
-</button>
-  {% if efdf_split %}
+  <button type="button" class="btn btn-primary not-visible" data-toggle="modal" data-target="#savemodal" id='save-btn'>
+    Save in Portfolio History
+  </button>
+  <br>
   <form action="{%  url 'portfolio:output-csv-test' %}" method="POST">
     {% csrf_token %}
-    <input type="submit" value="Download CSV">
+    <input type="submit" value="Download CSV" class="btn btn-warning" role="button">
     <input type="hidden" id="efdf-split-data" name="efdf-split-data">
   </form>
   {{ efdf_split|json_script:"efdf-split-json" }}
@@ -153,7 +91,52 @@ Chart
     
   </script>
   {% endif %}
-{% endif %}
+
+  {% if df %}
+  <div class="container">
+    <div class="row">
+      <div class="col">
+        {{ df|safe }}
+      </div>
+      <div class="col">
+        Chart
+        <br>
+        <img src="data:image/png;base64, {{test_chart|safe}}" id='img' width="800" height="600">
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+          var fxfyData = {{fxfy_record|safe}};
+          ctx = document.getElementById("myChart");
+          var myChart = new Chart(ctx, {
+            type: 'scatter',
+            data: {
+                
+                datasets: [{
+                  label: 'Efficient Frontier',
+                  data: fxfyData,
+                  backgroundColor: 'rgb(255, 99, 132)'
+                }]
+            },
+            options: {
+              responsive:true,
+              parsing: {
+                xAxisKey: 'Volatility',
+                yAxisKey: 'Return'},
+            
+            scales: {
+              x: {
+                type: 'linear',
+                position: 'bottom'
+              }
+            }
+            }
+        });
+
+
+        </script>
+      </div>
+    </div>
+    {% endif %}
+
 {% endblock %}
 
 

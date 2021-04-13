@@ -67,7 +67,7 @@ def portfolio_overview(request):
     stock_symbols = ','.join(stock_symbol_list)
     stockdata1 = get_batch_stock_price(stock_symbols)
     
-
+    #pie chart data
     chart_data = [['Stock Name', 'Stock Shares']]
     len_stock_data = len(test_holding_dict)
     #print(stock_symbol_list)
@@ -78,18 +78,30 @@ def portfolio_overview(request):
         chart_data.append(tempdata)
         tempdata = []
     
+    
+
     #print(chart_data)
     # --> AMD
     #print(test_holding_dict)
     #<QuerySet [{'id': 1, 'stock_symbol': 'AAPL', 'stock_shares': 1, 'stock_price': 0.0, 'created_by_id': 1}, 
-    # {'id': 4, 'stock_symbol': 'TSLA', 'stock_shares': 1, 'stock_price': 0.0, 'created_by_id': 1}, 
-    # {'id': 5, 'stock_symbol': 'GME', 'stock_shares': 4, 'stock_price': 0.0, 'created_by_id': 1}, 
-    # {'id': 10, 'stock_symbol': 'AMD', 'stock_shares': 1, 'stock_price': 50.0, 'created_by_id': 1}]>
+    
     for i in test_holding_dict:
         stockSymbol = i['stock_symbol']
         i['stock_latestprice'] = stockdata1[stockSymbol]['quote']['latestPrice']
         
     test_list = list(test_holding_dict)
+    #<QuerySet [{'id': 13, 'stock_symbol': 'ARKK', 'stock_shares': 3, 'stock_price': 3.0, 'created_by_id': 1, 'stock_latestprice': 125.928}
+
+    #bar chart data
+    bar_chart_data = [['Stock_Symbol','Stock_latestprice', 'Stock_cost']]
+
+    for i in range(len_stock_data):
+        tempbarchart = []
+        tempbarchart.append(test_holding_dict[i]['stock_symbol'])
+        tempbarchart.append(int(test_holding_dict[i]['stock_latestprice']))
+        tempbarchart.append(int(test_holding_dict[i]['stock_price']))
+        bar_chart_data.append(tempbarchart)
+        tempbarchart =[]
     
     #print(stockdata1)
     #print(user_portfolio['AAPL']['id']) --->1
@@ -100,7 +112,8 @@ def portfolio_overview(request):
     context = {
         'portfolio': test_list,
         'editform': edit_holding_form,
-        'piechartdata' : chart_data
+        'piechartdata' : chart_data,
+        'barchartdata' : bar_chart_data
     }
     
     return render(request, 'portfolio/overview.html', context)
@@ -200,8 +213,6 @@ def efficient_frontier_select(request):
         #print(list_efdf)
         #print(type(list_efdf))
         #print(w_df_split) //data format: {'column','index', 'data'}
-        print(type(ef_df))
-        
         ###output the image of EF
         stock_df_pre = ef.dfPrepare(selected_stock)
         log_st_df = ef.np_log_return(stock_df_pre)
@@ -260,23 +271,11 @@ def efficient_frontier_post(request):
         print(selected_stocklist)  
     return JsonResponse(request.POST)
 
-
-def output_csv(request, df):
-    response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename=Test.csv'
-
-    writer = csv.writer(response)
-    writer.writerow(['Test'])
-    writer.writerow(['test1'])
-    return response
-
-
-import datetime
 def output_df_csv(request):
     if request.method == 'POST':
         data = request.POST
-        response = HttpResponse(content_type='test/csv')
-        response['Content-Disposition'] = 'attachment; filename=Test.csv'
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename=EfficientFrontier.csv'
         csv_writer = csv.writer(response)
         first_col = json.loads(data['efdf-split-data'])
         

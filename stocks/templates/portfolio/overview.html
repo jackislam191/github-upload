@@ -26,6 +26,33 @@ Portfolio overview
 
      chart.draw(data, options);
    }
+   google.charts.load('current', {'packages':['bar']});
+   google.charts.setOnLoadCallback(drawStuff);
+   const barChartdata = {{ barchartdata|safe }}
+   function drawStuff() {
+     var data = new google.visualization.arrayToDataTable(barChartdata);
+
+     var options = {
+       width: 800,
+       chart: {
+         title: 'Price Vs Cost'
+       },
+       bars: 'horizontal', // Required for Material Bar Charts.
+       series: {
+         1: { axis: 'Cost'}, // Bind series 0 to an axis named 'distance'.
+         0: { axis: 'Price' } // Bind series 1 to an axis named 'brightness'.
+       },
+       axes: {
+         x: {
+          Cost: {label: 'Cost'}, // Bottom x-axis.
+          Price: {side: 'top', label: 'Price'} // Top x-axis.
+         }
+       }
+     };
+
+   var chart = new google.charts.Bar(document.getElementById('cost-price-barchart'));
+   chart.draw(data, options);
+ };
 
    
  </script>
@@ -129,15 +156,14 @@ Portfolio overview
         <div id="stock-allocation-piechart" style="width: 600px; height: 400px;"></div>
 
         <div class="card-body">
-          
+          Pie Chart
         </div>
       </div>
       <br>
       <div class="card" >
-        <div id="piechart1"></div>
-
-        <div class="card-body">
-          
+          <div id="cost-price-barchart" style="width: 600px; height: 500px;"></div>
+        <div class="card-body"> 
+          Bar Chart
         </div>
         
       </div>
