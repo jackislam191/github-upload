@@ -2,13 +2,15 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from quotes.models import Position
 from account.models import Account
+from quotes.forms import EditHoldingForm
 from . import utils as ef
 from .forms import SaveEfficientFrontierForm
 from .models import Portfolio
 from .processimg import get_ef_image
+import csv
 import requests 
 import json
 
@@ -61,10 +63,22 @@ def portfolio_overview(request):
     
     test_holding_dict = Position.objects.filter(created_by = request.user).values()
     stock_symbol_list = [stock.stock_symbol for stock in user_holding]
-    stock_symbol_list = list(set(stock_symbol_list))
+    stock_symbol_list = list(set(stock_symbol_list)) # //['GME', 'TSLA', 'OCGN', 'AMD', 'ARKK']//
     stock_symbols = ','.join(stock_symbol_list)
     stockdata1 = get_batch_stock_price(stock_symbols)
     
+
+    chart_data = [['Stock Name', 'Stock Shares']]
+    len_stock_data = len(test_holding_dict)
+    #print(stock_symbol_list)
+    for i in range(len_stock_data):
+        tempdata = []
+        tempdata.append(test_holding_dict[i]['stock_symbol'])
+        tempdata.append(int(test_holding_dict[i]['stock_shares']))
+        chart_data.append(tempdata)
+        tempdata = []
+    
+    #print(chart_data)
     # --> AMD
     #print(test_holding_dict)
     #<QuerySet [{'id': 1, 'stock_symbol': 'AAPL', 'stock_shares': 1, 'stock_price': 0.0, 'created_by_id': 1}, 
@@ -81,12 +95,45 @@ def portfolio_overview(request):
     #print(user_portfolio['AAPL']['id']) --->1
     
         #---> 1,4,5,10
-    context = {
-        'portfolio': test_list
 
+    edit_holding_form = EditHoldingForm()
+    context = {
+        'portfolio': test_list,
+        'editform': edit_holding_form,
+        'piechartdata' : chart_data
     }
     
     return render(request, 'portfolio/overview.html', context)
+
+def edit_holding(request, pk):
+    stock_holding = Position.objects.filter(created_by= request.user, id=pk)
+    form = EditHoldingForm()
+    #print(stock_holding.values())
+    
+    if request.method == 'POST':
+        form = EditHoldingForm(request.POST)
+        #print(form)
+        #print(request.POST['stock_shares']) //str
+        #print(request.POST['stock_price'])
+        data = request.POST
+        updated_shares = data['stock_shares']
+        updated_value = data['stock_price']
+        print(updated_shares)
+        print(updated_value)
+        if (int(updated_shares) > 0 and float(updated_value) >0 ):
+            try:
+                Position.objects.filter(created_by= request.user, id=pk).update(stock_shares=int(updated_shares), stock_price=float(updated_value))
+                messages.success(request, "Data is updated!")
+                return redirect("portfolio:overview")
+            except:
+                messages.warning(request, "Something error, Try again later!")
+        else:
+            messages.warning(request, "Invalid values")
+
+    context = {
+        'update_form':form
+    }
+    return render(request, 'portfolio/update_holding.html', context)
 
 def delete(request, stock_symbol):
     item = Position.objects.filter(created_by = request.user, stock_symbol= stock_symbol)
@@ -132,6 +179,7 @@ def efficient_frontier_select(request):
     efdf_split = None
     fxfy_record = None
     w_df_split = None
+    ef_df_csv =None
     test_chart = None
     save_ef_form = None
     if request.method == 'POST':
@@ -143,13 +191,16 @@ def efficient_frontier_select(request):
         #w_df_json = ef.json_format(w_df)
         #fxfy_json = json.loads(ef.json_format(fxfy_df))
         #efdf_json = ef.json_format(ef_df)
+        ef_df_csv = ef.to_csv(ef_df)
         ef_df_html = ef_df.to_html()
         #list_efdf = json.loads(efdf_json)
-        #efdf_split = json.loads(ef.json_format_split(ef_df))
+        efdf_split = json.loads(ef.json_format_split(ef_df))
         fxfy_record = json.loads(ef.json_format_record(fxfy_df))
         w_df_split = json.loads(ef.json_format_split(w_df))
         #print(list_efdf)
         #print(type(list_efdf))
+        #print(w_df_split) //data format: {'column','index', 'data'}
+        print(type(ef_df))
         
         ###output the image of EF
         stock_df_pre = ef.dfPrepare(selected_stock)
@@ -176,7 +227,9 @@ def efficient_frontier_select(request):
         'fxfy_record' : fxfy_record,
         'w_df_split' : w_df_split,
         'test_chart': test_chart,
-        'efform': save_ef_form
+        'efform': save_ef_form,
+        'efdf_csv': ef_df_csv,
+        'efdf_df': ef_df
     }
     
     return render(request, 'portfolio/efficient_frontier.html', context)
@@ -208,4 +261,26 @@ def efficient_frontier_post(request):
     return JsonResponse(request.POST)
 
 
+def output_csv(request, df):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename=Test.csv'
 
+    writer = csv.writer(response)
+    writer.writerow(['Test'])
+    writer.writerow(['test1'])
+    return response
+
+
+import datetime
+def output_df_csv(request):
+    if request.method == 'POST':
+        data = request.POST
+        response = HttpResponse(content_type='test/csv')
+        response['Content-Disposition'] = 'attachment; filename=Test.csv'
+        csv_writer = csv.writer(response)
+        first_col = json.loads(data['efdf-split-data'])
+        
+        csv_writer.writerow(first_col['columns'])
+        for row in first_col['data']:
+            csv_writer.writerow(row)
+        return response

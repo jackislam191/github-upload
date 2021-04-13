@@ -302,6 +302,9 @@ def json_format_record(res_df):
     result_json_df = json.dumps(parsed, indent=4)
     return result_json_df
 
+def to_csv(res_df):
+    res_csv = res_df.to_csv(index=False)
+    return res_csv
 
 def to_img():
     buffer = BytesIO()

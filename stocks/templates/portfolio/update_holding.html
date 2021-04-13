@@ -1,0 +1,21 @@
+{% extends 'base.html' %} 
+{% load static %} 
+{% block title %} 
+Update Stock
+{% endblock %} 
+{% block content %}
+{% block messages %}
+      {% if messages %}
+          {% for message in messages %}
+              <div class="alert alert-{{ message.tags }}"> 
+                  {{ message|safe }}
+              </div>
+          {% endfor %}
+      {% endif %}
+  {% endblock %}
+<form action="" method="POST">
+        {% csrf_token %}
+        {{ update_form }}
+        <button type="submit">Submit</button>
+</form>
+{% endblock content %}

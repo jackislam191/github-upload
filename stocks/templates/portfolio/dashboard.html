@@ -1,67 +1,106 @@
-{% extends 'base.html' %}
-{% load static %}
-{% block title %}
-Portfolio Dashboard
-
-{% endblock %}
-
-
+{% extends 'base.html' %} 
+{% load static %} 
+{% block title %} 
+Portfolio
+Dashboard 
+{% endblock %} 
 {% block content %}
-<h1> Analysis history</h1>
-{% if user_portfolio %}
-
-    {% for item in user_portfolio %}
-    <div id="accordion">
-        <div class="card">
-        <div class="card-header" id="{{ item.id }}">
-            <h5 class="mb-0">
-                {{ item.id }}
-            <button class="btn btn-link" data-toggle="collapse" data-target="#collapse{{ item.id }}"  aria-expanded="true" aria-controls="{{ item.id }}">
-                 {{ item.name }}
-            </button>
-            </h5>
-        </div>
-    
-            <div id="collapse{{ item.id }}" class="collapse" aria-labelledby="{{ item.id }}" data-parent="#accordion">
-                <div class="card-body">
-                    <img src="http://localhost:8000/media/{{ item.image }}" alt="{{item.name}}" width="1000px" height="500px">
-                    
-                    
-                    <br>
-                    <p>Description: {{ item.description }} </p>
-                    <br>
-                    <p> Created: {{ item.created }} </p> 
-                    <br>
-                    <!-- Button trigger modal -->
-                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#exampleModal">Delete</button>
-                    <!-- Modal -->
-                    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                        <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">Delete this record?</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                            </div>
-                            
-                            <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
-                            <a href="{% url 'portfolio:del_dashboard' item.id %}" class="btn btn-primary" role="button">Yes</a>
-                            
-                            </div>
-                        </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+<h1>Analysis history</h1>
+{% if user_portfolio %} {% for item in user_portfolio %}
+<div id="accordion">
+  <div class="card">
+    <div class="card-header" id="{{ item.id }}">
+      <h5 class="mb-0">
+        {{ item.id }}
+        <button
+          class="btn btn-link"
+          data-toggle="collapse"
+          data-target="#collapse{{ item.id }}"
+          aria-expanded="true"
+          aria-controls="{{ item.id }}"
+        >
+          {{ item.name }}
+        </button>
+      </h5>
     </div>
-    
-  {% endfor %}
 
-{% else %}
-  <h1>You have no record in Efficient Frontier Analysis! </h1>
-  <p>Try it now!</p>
-{% endif %}
-{% endblock %}
+    <div
+      id="collapse{{ item.id }}"
+      class="collapse"
+      aria-labelledby="{{ item.id }}"
+      data-parent="#accordion"
+    >
+      <div class="card-body">
+        <img
+          src="http://localhost:8000/media/{{ item.image }}"
+          alt="{{item.name}}"
+          width="1000px"
+          height="500px"
+        />
+
+        <br />
+        <p>Description: {{ item.description }}</p>
+        <br />
+        <p>Created: {{ item.created }}</p>
+        <br />
+        <!-- Button trigger modal -->
+        <button
+          type="button"
+          class="btn btn-danger"
+          data-toggle="modal"
+          data-target="#exampleModal"
+        >
+          Delete
+        </button>
+        <!-- Modal -->
+        <div
+          class="modal fade"
+          id="exampleModal"
+          tabindex="-1"
+          role="dialog"
+          aria-labelledby="exampleModalLabel"
+          aria-hidden="true"
+        >
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">
+                  Delete this record?
+                </h5>
+                <button
+                  type="button"
+                  class="close"
+                  data-dismiss="modal"
+                  aria-label="Close"
+                >
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+
+              <div class="modal-footer">
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  data-dismiss="modal"
+                >
+                  No
+                </button>
+                <a
+                  href="{% url 'portfolio:del_dashboard' item.id %}"
+                  class="btn btn-primary"
+                  role="button"
+                  >Yes</a
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endfor %} {% else %}
+<h1>You have no record in Efficient Frontier Analysis!</h1>
+<p>Try it now!</p>
+{% endif %} {% endblock %}

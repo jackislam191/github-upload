@@ -137,10 +137,22 @@ Chart
 <button type="button" class="btn btn-primary not-visible" data-toggle="modal" data-target="#outputcsvmodal" id='download-btn'>
   Download
 </button>
+<a href="{% url 'portfolio:output-csv-test' %}" class="btn btn-warning" role="button">Export CSV</a>
 <button type="button" class="btn btn-primary not-visible" data-toggle="modal" data-target="#savemodal" id='save-btn'>
   Save in Portfolio History
 </button>
-
+  {% if efdf_split %}
+  <form action="{%  url 'portfolio:output-csv-test' %}" method="POST">
+    {% csrf_token %}
+    <input type="submit" value="Download CSV">
+    <input type="hidden" id="efdf-split-data" name="efdf-split-data">
+  </form>
+  {{ efdf_split|json_script:"efdf-split-json" }}
+  <script>
+    document.getElementById("efdf-split-data").value = document.getElementById("efdf-split-json").textContent;
+    
+  </script>
+  {% endif %}
 {% endif %}
 {% endblock %}
 
