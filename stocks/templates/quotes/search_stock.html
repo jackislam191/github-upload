@@ -88,6 +88,8 @@ Search stock -
             Add to Portfolio
         </button>
         <button type="button" class="btn btn-danger"><a href="{% url 'account:dashboard' %}">Back</a></button>
+        <button type="button" class="btn btn-warning"><a href="{% url 'portfolio:overview' %}">Go to Portfolio Dashboard</a></button>
+        <button type="button" class="btn btn-info"><a href="{% url 'portfolio:efficientfrontier' %}">Go to efficient frontier analysis</a></button>
     {% endif %}
 {% endif %}
 

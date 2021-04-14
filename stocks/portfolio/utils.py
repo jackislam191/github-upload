@@ -72,146 +72,9 @@ def get_max_index(expected_return, expected_volatility, sharpe_ratio):
     return maxindex_sr, maxY, minY, maxX, minX
 
 
-def minimize_ef(log_return_df_output, weights_output):
-#    
-#   get_ret_vol_sr_result = get_ret_vol_sr(log_st_df, w1)
-#
-    n_stock = len(log_return_df_output.columns)
-    cons = ({'type':'eq', 'fun':check_sum})
-    bounds_list = [0,1]
-    bounds_init = []
-    for i in range(n_stock):
-        bounds_init.append(tuple(bounds_list))
-
-    bounds = tuple(bounds_init)
-    #setup initial weighting ---> 1 / numbers of stock
-    #if 3 stocks, weighting -> 0.33 each (1/3)
-    init_weight = [1/n_stock] * n_stock
-    
-    optim_result = minimize(neg_sharpe, init_weight, method='SLSQP', bounds=bounds, constraints=cons)
-
-    return optim_result
-
-def minimize_volatility(log_return_df_output, weights):
-    
-    return get_ret_vol_sr(log_return_df_output, weights)[1]
-    
-def frontier_x_y(expected_return, maxindex_SR, max_ER, log_return_df_output, weights_output):
-    n_stock = len(log_return_df_output.columns)
-    
-    bounds_list = [0,1]
-    bounds_init = []
-    for i in range(n_stock):
-        bounds_init.append(tuple(bounds_list))
-
-    bounds = tuple(bounds_init)
-    #setup initial weighting ---> 1 / numbers of stock
-    #if 3 stocks, weighting -> 0.33 each (1/3)
-    init_weight = [1/n_stock] * n_stock
-    frontier_y = np.linspace(expected_return[maxindex_SR], max_ER, 50)
-    frontier_x = []
-    recommend_weighting = []
-    for i in frontier_y:
-        cons = ({'type':'eq', 'fun':check_sum},
-                {'type':'eq', 'fun': lambda w: get_ret_vol_sr(log_return_df_output, w)[0] - i})
-        result = minimize(minimize_volatility, init_weight ,args=args, method='SLSQP', bounds=bounds, constraints=cons)
-        frontier_x.append(result['fun'])
-        recommend_weighting.append(result['x'])
-    return frontier_y, frontier_x, recommend_weighting
 
 
-#stock_df_pre = dfPrepare(stock_list)
-#log_st_df = np_log_return(stock_df_pre)
-##
-#eR, eV, sR, w1 = efficient_frontier_pre(log_st_df)
-#maxSR, maxER, minER, maxEV, minEV = get_max_index(eR,eV,sR)
-#FY, FX, RW = frontier_x_y(eR, maxSR, maxER, log_st_df, w1)
-
-#plt.figure(figsize=(12,8))
-#plt.xlabel('Volatility')
-#plt.ylabel('Return')
-#plt.scatter(eV,eR, c=sR)
-#plt.colorbar(label='Sharpe Ratio')
-#plt.scatter(eV[maxSR], eR[maxSR],c='red')
-#plt.plot(FX,FY, 'r--', linewidth=3)
-##plt.savefig('cover.png')
-#plt.show()
-#opt = minimize_ef(log_st_df, w1)
-#print(opt)
-
-def combination(stock_list):
-    stock_df_pre = dfPrepare(stock_list)
-    log_st_df = np_log_return(stock_df_pre)
-    #ow = weight, aw = all weight
-    eR, eV, sR, ow, aw = efficient_frontier_pre(log_st_df)
-    maxSR, maxER, minER, maxEV, minEV = get_max_index(eR,eV,sR)
-    FY, FX, RW = frontier_x_y(eR, maxSR, maxER, log_st_df, w1)
-
-    return FY, FX, RW
-
-
-#stock_list = ['AAPL', 'TSLA', 'GME']
-#stock_df_pre = dfPrepare(stock_list)
-#log_st_df = np_log_return(stock_df_pre)
-#eR, eV, sR, ow, aw = efficient_frontier_pre(log_st_df)
-
-
-
-##################################################################
-#print(neg_sharpe(ow))
-
-def minimize_test(log_return_df_output, weights):
-    #get_ret_vol_sr(weights)
-
-    def get_ret_vol_sr(weights):
-        weights = np.array(weights)
-        ret = np.sum(log_return_df_output.mean() * weights) * 252
-        vol = np.sqrt(np.dot(weights.T, np.dot(log_return_df_output.cov()*252, weights)))
-        sr = ret / vol
-        return np.array([ret, vol, sr])
-
-    def neg_sharpe(weights):
-    # the number 2 is the sharpe ratio index from the get_ret_vol_sr
-        return get_ret_vol_sr(weights)[2] * -1
-    def check_sum(weights):
-    
-    #return 0 if sum of the weights is 1
-        return np.sum(weights)-1
-    
-    n_stock = len(log_return_df_output.columns)
-    cons = ({'type':'eq', 'fun':check_sum})
-    bounds_list = [0,1]
-    bounds_init = []
-    for i in range(n_stock):
-        bounds_init.append(tuple(bounds_list))
-
-    bounds = tuple(bounds_init)
-    #setup initial weighting ---> 1 / numbers of stock
-    #if 3 stocks, weighting -> 0.33 each (1/3)
-    init_weight = [1/n_stock] * n_stock
-
-    optim_result = minimize(neg_sharpe, init_weight, method='SLSQP', bounds=bounds, constraints=cons)
-
-    return  optim_result
-
-#print(minimize_test(log_st_df, ow))
-
-
-#test for minimize_test
-def combination_minmize(stock_list):
-    stock_df_pre = dfPrepare(stock_list)
-    log_st_df = np_log_return(stock_df_pre)
-    #ow = weight, aw = all weight
-    eR, eV, sR, ow, aw = efficient_frontier_pre(log_st_df)
-    result_1 = minimize_test(log_st_df, ow)
-    
-    
-
-    return result_1
-#stock_list = ['AAPL', 'TSLA', 'GME']
-#print(combination_minmize(stock_list))
-
-def frontier_test(expected_return, maxindex_SR, max_ER, log_return_df_output, weights):
+def frontier_x_y_w(expected_return, maxindex_SR, max_ER, log_return_df_output, weights):
     #initial setup
     n_stock = len(log_return_df_output.columns)
     
@@ -222,32 +85,29 @@ def frontier_test(expected_return, maxindex_SR, max_ER, log_return_df_output, we
 
     bounds = tuple(bounds_init)
     init_weight = [1/n_stock] * n_stock
+    #initial weighting// if n_stock , init_weight = [0.25,0.25,0.25,0.25]
     frontier_y = np.linspace(expected_return[maxindex_SR], max_ER, 50)
     frontier_x = []
     recommend_weighting = []
-
+    
     #####main function
-    def get_ret_vol_sr(weights):
+    def ret_vol_sr(weights):
         weights = np.array(weights)
         ret = np.sum(log_return_df_output.mean() * weights) * 252
         vol = np.sqrt(np.dot(weights.T, np.dot(log_return_df_output.cov()*252, weights)))
         sr = ret / vol
         return np.array([ret, vol, sr])
+
+    def check_sum_is_one(weights):
         
-    def neg_sharpe(weights):
-    # the number 2 is the sharpe ratio index from the get_ret_vol_sr
-        return get_ret_vol_sr(weights)[2] * -1
-    def check_sum(weights):
-    
     #return 0 if sum of the weights is 1
         return np.sum(weights)-1
     def minimize_volatility( weights):
-    
-        return get_ret_vol_sr(weights)[1]
+        return ret_vol_sr(weights)[1]
 
     for i in frontier_y:
-        cons = ({'type':'eq', 'fun':check_sum},
-                {'type':'eq', 'fun': lambda w: get_ret_vol_sr(w)[0] - i})
+        cons = ({'type':'eq', 'fun':check_sum_is_one},
+                {'type':'eq', 'fun': lambda w: ret_vol_sr(w)[0] - i})
         result = minimize(minimize_volatility, init_weight , method='SLSQP', bounds=bounds, constraints=cons)
         frontier_x.append(result['fun'])
         recommend_weighting.append(result['x'])
@@ -260,14 +120,14 @@ def combination_frontier(stock_list):
     #ow = weight, aw = all weight
     eR, eV, sR, ow, aw = efficient_frontier_pre(log_st_df)
     max_sr, maxER, minER, maxVo, minVo = get_max_index(eR,eV,sR)
-    fy, fx, rw = frontier_test(eR, max_sr, maxER, log_st_df, ow)
+    fy, fx, rw = frontier_x_y_w(eR, max_sr, maxER, log_st_df, ow)
     return fy, fx, rw
 
 
 
 def transform_frontier_todf(frontierY, frontierX, Weighting, stock_list):
-    new_fy = np.around(frontierY, decimals=2)
-    new_fx =np.around(frontierX, decimals=2)
+    new_fy = np.around(frontierY, decimals=4)
+    new_fx =np.around(frontierX, decimals=4)
     new_weight = np.round(Weighting, 4) *100
     frontierY_df = pd.DataFrame(new_fy, columns=['Return'])
     frontierX_df = pd.DataFrame(new_fx, columns=['Volatility'])

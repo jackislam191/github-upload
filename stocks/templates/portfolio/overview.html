@@ -75,25 +75,19 @@ Portfolio overview
       <table class="table">
         <thead class="thead-dark">
           <tr>
-            
             <th scope="col">Stock Symbol</th>
             <th scope="col">Stock Shares</th>
             <th scope="col">Cost (USD)</th>
             <th scope="col">Stock Latest Price (USD)</th>
             <th scope="col">Edit</th>
             <th scope="col">Delete</th>
-            
-            
           </tr>
         </thead>
         
         <tbody>
           {% if portfolio %}
             {% for item in portfolio %} 
-            
-                
                   <tr>
-                    
                       <td>{{ item.stock_symbol }}</td>
                       <td>{{ item.stock_shares }}</td>
                       <td>{{ item.stock_price }}</td>
@@ -101,52 +95,10 @@ Portfolio overview
                       <!-- Button trigger Edit modal box -->
                       <td><a href="{% url 'portfolio:edit_holding' item.id %}" class="btn btn-warning" role="button">Edit</a></td> 
                       <!-- Button trigger delete modal -->
-                      <td><button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal">Delete</button></td> 
+                      <td><a href="{% url 'portfolio:delete' item.stock_symbol %}" class="btn btn-danger" role="button">Delete</a></td> 
                   </tr>
-                  
-                  <!-- Delete Modal Box -->
-                  <div
-                  class="modal fade"
-                  id="deleteModal"
-                  tabindex="-1"
-                  role="dialog"
-                  aria-labelledby="exampleModalLabel"
-                  aria-hidden="true"
-                >
-                  <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                      <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">
-                          Delete this stock?
-                        </h5>
-                        <button
-                          type="button"
-                          class="close"
-                          data-dismiss="modal"
-                          aria-label="Close"
-                        >
-                          <span aria-hidden="true">&times;</span>
-                        </button>
-                      </div>
-        
-                      <div class="modal-footer">
-                        <button
-                          type="button"
-                          class="btn btn-secondary"
-                          data-dismiss="modal"
-                        >
-                          No
-                        </button>
-                        <a href="{% url 'portfolio:delete' item.stock_symbol %}" class="btn btn-danger" role="button">Yes</a>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-            {% endfor %}
-      
-          
-          {% endif %}
-      
+            {% endfor %} 
+          {% endif %}  
         </tbody>
       </table>
     </div>
@@ -154,10 +106,9 @@ Portfolio overview
     <div class="col-6">
       <div class="card" >
         <div id="stock-allocation-piechart" style="width: 600px; height: 400px;"></div>
-
-        <div class="card-body">
-          Pie Chart
-        </div>
+          <div class="card-body">
+            Pie Chart
+          </div>
       </div>
       <br>
       <div class="card" >
@@ -165,9 +116,7 @@ Portfolio overview
         <div class="card-body"> 
           Bar Chart
         </div>
-        
       </div>
-      
     </div>
   </div>
 </div>

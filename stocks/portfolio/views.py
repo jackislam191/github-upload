@@ -218,7 +218,7 @@ def efficient_frontier_select(request):
         log_st_df = ef.np_log_return(stock_df_pre)
         eR, eV, sR, ow, aw = ef.efficient_frontier_pre(log_st_df)
         max_sr, maxER, minER, maxVo, minVo = ef.get_max_index(eR,eV,sR)
-        fy, fx, rw = ef.frontier_test(eR, max_sr, maxER, log_st_df, ow)
+        fy, fx, rw = ef.frontier_x_y_w(eR, max_sr, maxER, log_st_df, ow)
         test_chart = ef.get_img(eV, eR, sR, max_sr ,fx,fy)
 
         save_ef_form = SaveEfficientFrontierForm(initial={'name':selected_stock
