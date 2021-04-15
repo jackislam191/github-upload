@@ -7,13 +7,13 @@ import json
 from scipy.optimize import minimize
 from io import BytesIO
 import base64
-def dfPrepare(datalist):
+def dfPrepare(datalist, time_period):
     dfDict={}
     numDatalist = len(datalist)
     for i in range(numDatalist):
         dfDict[datalist[i]] = 0
     dataInUse = yf.download(tickers = datalist,
-                            period="1y", group_by = 'ticker')
+                            period=time_period , group_by = 'ticker')
     if numDatalist != 1:
         for i in dfDict:
             dfDict[i] = pd.DataFrame({str(i): dataInUse[i]["Adj Close"]})
@@ -32,12 +32,12 @@ def np_log_return(stockDF):
     log_ret = np.log(stockDF/stockDF.shift(1))
     return log_ret
 
-def efficient_frontier_pre(log_re_df):
+def efficient_frontier_pre(log_re_df, num_port):
     log_re_df = log_re_df.dropna()
     n_stock = len(log_re_df.columns)
 
     np.random.seed(42)
-    noOfportfolios = 1000
+    noOfportfolios = num_port
     all_weights = np.zeros((noOfportfolios,n_stock))
 
     expectedReturn = np.zeros(noOfportfolios)
@@ -74,7 +74,7 @@ def get_max_index(expected_return, expected_volatility, sharpe_ratio):
 
 
 
-def frontier_x_y_w(expected_return, maxindex_SR, max_ER, log_return_df_output, weights):
+def frontier_x_y_w(expected_return, maxindex_SR, max_ER, log_return_df_output, weights, nums_record):
     #initial setup
     n_stock = len(log_return_df_output.columns)
     
@@ -86,7 +86,7 @@ def frontier_x_y_w(expected_return, maxindex_SR, max_ER, log_return_df_output, w
     bounds = tuple(bounds_init)
     init_weight = [1/n_stock] * n_stock
     #initial weighting// if n_stock , init_weight = [0.25,0.25,0.25,0.25]
-    frontier_y = np.linspace(expected_return[maxindex_SR], max_ER, 50)
+    frontier_y = np.linspace(expected_return[maxindex_SR], max_ER, nums_record)
     frontier_x = []
     recommend_weighting = []
     
@@ -114,13 +114,13 @@ def frontier_x_y_w(expected_return, maxindex_SR, max_ER, log_return_df_output, w
     return frontier_y, frontier_x, recommend_weighting
 
 #####################
-def combination_frontier(stock_list):
-    stock_df_pre = dfPrepare(stock_list)
+def combination_frontier(stock_list, time_period, num_ports, num_records):
+    stock_df_pre = dfPrepare(stock_list, time_period)
     log_st_df = np_log_return(stock_df_pre)
     #ow = weight, aw = all weight
-    eR, eV, sR, ow, aw = efficient_frontier_pre(log_st_df)
+    eR, eV, sR, ow, aw = efficient_frontier_pre(log_st_df,  num_ports)
     max_sr, maxER, minER, maxVo, minVo = get_max_index(eR,eV,sR)
-    fy, fx, rw = frontier_x_y_w(eR, max_sr, maxER, log_st_df, ow)
+    fy, fx, rw = frontier_x_y_w(eR, max_sr, maxER, log_st_df, ow, num_records)
     return fy, fx, rw
 
 

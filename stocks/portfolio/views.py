@@ -77,9 +77,6 @@ def portfolio_overview(request):
         tempdata.append(int(test_holding_dict[i]['stock_shares']))
         chart_data.append(tempdata)
         tempdata = []
-    
-    
-
     #print(chart_data)
     # --> AMD
     #print(test_holding_dict)
@@ -196,9 +193,25 @@ def efficient_frontier_select(request):
     test_chart = None
     save_ef_form = None
     if request.method == 'POST':
+        #request.post = {'stock_symbol': ['AMD', 'ARKK', 'OCGN'], 'time': ['1mo'], 'num-portfolio': ['1000']}
         selected_stock = request.POST.getlist('stock_symbol')
-        ta, tb, tc = ef.combination_frontier(selected_stock)
-        fy_df, fx_df, w_df, fxfy_df, ef_df = ef.transform_frontier_todf(ta,tb,tc, selected_stock)
+
+        time_period = request.POST.get('time')
+        num_port = int(request.POST.get('num-portfolio'))
+        selected_record = int(request.POST.get('display-record'))
+        print('numbers of portfolio: ',num_port)
+        print('numbers of records: ',selected_record)
+        #genertate efficient frontier data
+        stock_df_pre = ef.dfPrepare(selected_stock, time_period)
+        log_st_df = ef.np_log_return(stock_df_pre)
+        eR, eV, sR, ow, aw = ef.efficient_frontier_pre(log_st_df, num_port)
+        max_sr, maxER, minER, maxVo, minVo = ef.get_max_index(eR,eV,sR)
+        fy, fx, rw = ef.frontier_x_y_w(eR, max_sr, maxER, log_st_df, ow, selected_record)
+
+        #transform output to chart
+        test_chart = ef.get_img(eV, eR, sR, max_sr ,fx,fy)
+        #transform output to df
+        fy_df, fx_df, w_df, fxfy_df, ef_df = ef.transform_frontier_todf(fy,fx,rw, selected_stock)
         fy_json = ef.json_format(fy_df)
         fx_json = ef.json_format(fx_df)
         #w_df_json = ef.json_format(w_df)
@@ -210,16 +223,6 @@ def efficient_frontier_select(request):
         efdf_split = json.loads(ef.json_format_split(ef_df))
         fxfy_record = json.loads(ef.json_format_record(fxfy_df))
         w_df_split = json.loads(ef.json_format_split(w_df))
-        #print(list_efdf)
-        #print(type(list_efdf))
-        #print(w_df_split) //data format: {'column','index', 'data'}
-        ###output the image of EF
-        stock_df_pre = ef.dfPrepare(selected_stock)
-        log_st_df = ef.np_log_return(stock_df_pre)
-        eR, eV, sR, ow, aw = ef.efficient_frontier_pre(log_st_df)
-        max_sr, maxER, minER, maxVo, minVo = ef.get_max_index(eR,eV,sR)
-        fy, fx, rw = ef.frontier_x_y_w(eR, max_sr, maxER, log_st_df, ow)
-        test_chart = ef.get_img(eV, eR, sR, max_sr ,fx,fy)
 
         save_ef_form = SaveEfficientFrontierForm(initial={'name':selected_stock
             ,'description':selected_stock})

@@ -9,28 +9,67 @@
 {% endblock scripts %}
 
 {%  block content %}
-
-
-<form action="" method='post' id='checkbox-stock-form'>
-    {% if holding %}
+{% if holding %}
+<div class="container">
+  <h1>Efficient Frontier Analysis</h1>
+  <form action="" method='post' id='checkbox-stock-form'>
+    
     {% csrf_token %}
-        {% for item in holding %}
-            <!-- input type pass the value format {'TSLA' : ['TSLA']}  -->
-            <input type="checkbox" value="{{item.stock_symbol}}" name="stock_symbol">
-            {{item.stock_symbol}}<br>
+  <div class="row">
+    <div class="col-sm">
+      <p>Current Stock in your portfolio</p>
+      {% for item in holding %}
+              <!-- input type pass the value format {'TSLA' : ['TSLA']}  -->
+              <input type="checkbox" value="{{item.stock_symbol}}" name="stock_symbol">
+              {{item.stock_symbol}}<br>
+          {% endfor %}
+    </div>
+    <div class="col-sm">
+      Select time period in analsis (from 1 month to 3 years)
+      <select id="time-period" name="time">
+        <option value="1mo">1 month</option>
+        <option value="3mo">3 months</option>
+        <option value="6mo">6 months</option>
+        <option value="1y">1 year</option>
+        <option value="2y">2 years</option>
+        <option value="3y">3 years</option>
+      </select>
+    </div>
+    <div class="col-sm">
+      Input number of portfolio to simulate (from 1000 to 5000)
+      <br>
+      <input type="number" id="num-portfolio" name="num-portfolio" min="1000" max="5000">
+      <br>
+      Select the number of records displayed(from 50 to 500)
+      <br>
+      <input type="number" id="display-record" name="display-record" min="50" max="500" step="50">
+    </div>
+  </div>
+    <button type="submit" id="submit-stock-btn">Submit</button>
+  </form>
+</div>
+{% else %}
+<h1>You have no stock record. Go to add the stock to your portfolio now!</h1>
+{% endif %}
 
-        {% endfor %}
-        <button type="submit" id="submit-stock-btn">Submit</button>
-    {% endif %}
-</form>
+<!--<form action="" method='post' id='checkbox-stock-form'>
+          {% if holding %}
+          {% csrf_token %}
+              {% for item in holding %}
+                  
+                  <input type="checkbox" value="{{item.stock_symbol}}" name="stock_symbol">
+                  {{item.stock_symbol}}<br>
+
+              {% endfor %}
+              <button type="submit" id="submit-stock-btn">Submit</button>
+          {% endif %}
+      </form>    -->
+<!-- input type pass the value format {'TSLA' : ['TSLA']}  -->
 
       
 
 
-</table>
-<div class="chart-container">
-  <canvas id="myChart"></canvas>
-</div>
+
 
 <br>
 
@@ -94,6 +133,13 @@
 
   {% if df %}
   <div class="container">
+    <h1>The result of efficient frontier analysis:</h1>
+    <br>
+    <div class="chart-container">
+      <canvas id="myChart"></canvas>
+    </div>
+    <br>
+    
     <div class="row">
       <div class="col">
         {{ df|safe }}
