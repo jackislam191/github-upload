@@ -1,4 +1,4 @@
-# Capstone
+# Django Efficient Frontier with Stock quotes function
 
 #Setup
 Using Python Virtual environment to run the project
