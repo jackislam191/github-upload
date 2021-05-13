@@ -11,7 +11,7 @@ Dashboard
   <div class="card">
     <div class="card-header" id="{{ item.id }}">
       <h5 class="mb-0">
-        {{ item.id }}
+        
         <button
           class="btn btn-link"
           data-toggle="collapse"
@@ -102,5 +102,6 @@ aria-hidden="true"
 </div>
 {% endfor %} {% else %}
 <h1>You have no record in Efficient Frontier Analysis!</h1>
-<p>Try it now!</p>
+<a href="{% url 'portfolio:efficientfrontier' %}">Try it now!</a>
+
 {% endif %} {% endblock %}
