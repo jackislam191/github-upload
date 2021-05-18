@@ -10,3 +10,5 @@ cd stocks
 Command Line: py manage.py runserver
 
 Default: localhost:8000/
+
+Demo video:https://www.youtube.com/watch?v=ianONLMkoPo&ab_channel=jacklam
